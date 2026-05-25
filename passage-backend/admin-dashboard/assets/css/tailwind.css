@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+@config "../../../tailwind.config.js";
+
+* {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}

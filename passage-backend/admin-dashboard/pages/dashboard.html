@@ -1,0 +1,790 @@
+
+<div class="page-header">
+  <div class="page-header-left">
+    <p>Dashboard</p>
+    <p id="db-date">Loading date…</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn-outline"><i class="ti ti-download" aria-hidden="true"></i> Export</button>
+    <button class="btn-primary"><i class="ti ti-plus" aria-hidden="true"></i> Add Ride</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-grid">
+  <div class="stat-card hero">
+    <div class="stat-icon" style="background:rgba(255,255,255,.15);">
+      <i class="ti ti-motorbike" style="color:#fff;" aria-hidden="true"></i>
+    </div>
+    <p class="stat-label">Total Rides Today</p>
+    <p class="stat-val">110</p>
+    <p class="stat-sub">
+      <i class="ti ti-trending-up" aria-hidden="true"></i> +12% from yesterday
+    </p>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:var(--green-50);">
+      <i class="ti ti-user-check" style="color:var(--green-500);font-size:18px;" aria-hidden="true"></i>
+    </div>
+    <p class="stat-label">Active Riders</p>
+    <p class="stat-val">90</p>
+    <p class="stat-sub sub-up"><i class="ti ti-circle-check" aria-hidden="true"></i> On duty now</p>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:var(--blue-50);">
+      <i class="ti ti-school" style="color:var(--blue-600);font-size:18px;" aria-hidden="true"></i>
+    </div>
+    <p class="stat-label">Children Scheduled</p>
+    <p class="stat-val">110</p>
+    <p class="stat-sub sub-mute"><i class="ti ti-calendar" aria-hidden="true"></i> All routes loaded</p>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:var(--amber-50);">
+      <i class="ti ti-flag-check" style="color:var(--amber-600);font-size:18px;" aria-hidden="true"></i>
+    </div>
+    <p class="stat-label">Completed Rides</p>
+    <p class="stat-val">90</p>
+    <p class="stat-sub sub-up"><i class="ti ti-check" aria-hidden="true"></i> 82% completion rate</p>
+  </div>
+</div>
+
+<!-- MID ROW: chart + alerts -->
+<div class="mid-grid">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Ride Activity — This Week</span>
+      <span class="card-meta">Mon – Sat</span>
+    </div>
+    <div class="bar-chart">
+      <div class="bars">
+        <div class="bar-col">
+          <div class="bar-fill" style="height:74%;background:var(--green-200);" title="Monday: 85"></div>
+          <span class="bar-day">M</span>
+        </div>
+        <div class="bar-col">
+          <div class="bar-fill" style="height:83%;background:var(--green-200);" title="Tuesday: 95"></div>
+          <span class="bar-day">T</span>
+        </div>
+        <div class="bar-col">
+          <div class="bar-fill" style="height:89%;background:var(--green-200);" title="Wednesday: 102"></div>
+          <span class="bar-day">W</span>
+        </div>
+        <div class="bar-col">
+          <div class="bar-fill" style="height:100%;background:var(--green-500);" title="Thursday: 115 (peak)"></div>
+          <span class="bar-day">T</span>
+        </div>
+        <div class="bar-col">
+          <div class="bar-fill" style="height:85%;background:var(--green-200);" title="Friday: 98"></div>
+          <span class="bar-day">F</span>
+        </div>
+        <div class="bar-col">
+          <div class="bar-fill" style="height:96%;background:var(--green-700);" title="Saturday: 110 (today)"></div>
+          <span class="bar-day">S</span>
+        </div>
+      </div>
+      <div class="chart-stats">
+        <div class="cs-item">
+          <p>Avg / day</p>
+          <p>101</p>
+        </div>
+        <div class="cs-item">
+          <p>Peak</p>
+          <p>Thu · 115</p>
+        </div>
+        <div class="cs-item">
+          <p>Week total</p>
+          <p>605</p>
+        </div>
+        <div class="cs-item">
+          <p>On-time rate</p>
+          <p>94%</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="display:flex;flex-direction:column;">
+    <div class="card-header">
+      <span class="card-title">Live Alerts</span>
+      <span
+        style="background:var(--red-50);color:var(--red-600);font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;">3
+        active</span>
+    </div>
+    <div class="alert-list" style="flex:1;">
+      <div class="alert-row">
+        <div class="a-dot red"></div>
+        <div class="a-body">
+          <p>Kevin T. (KT-05) pickup overdue — no rider confirmation</p>
+          <p>7:45 AM · 10 min ago</p>
+        </div>
+      </div>
+      <div class="alert-row">
+        <div class="a-dot amber"></div>
+        <div class="a-body">
+          <p>Device offline — Helmet-22 assigned to Ivan / Gloria N.</p>
+          <p>7:32 AM · 23 min ago</p>
+        </div>
+      </div>
+      <div class="alert-row">
+        <div class="a-dot blue"></div>
+        <div class="a-body">
+          <p>Geofence exit: Brian K. left Kasai Rd safe zone</p>
+          <p>7:18 AM · 37 min ago</p>
+        </div>
+      </div>
+    </div>
+    <button class="see-all-btn">
+      View all alerts <i class="ti ti-arrow-right" style="font-size:13px;" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>
+
+<!-- RIDES TABLE -->
+<div class="card">
+  <div class="table-toolbar">
+    <div class="pill-row" id="filterPills">
+      <button class="pill active" onclick="filterTable('all',this)">All</button>
+      <button class="pill" onclick="filterTable('assigned',this)">Assigned</button>
+      <button class="pill" onclick="filterTable('in-progress',this)">In Progress</button>
+      <button class="pill" onclick="filterTable('pending',this)">Pending</button>
+    </div>
+    <div class="table-search">
+      <i class="ti ti-search" style="color:var(--gray-400);font-size:14px;" aria-hidden="true"></i>
+      <input type="text" placeholder="Search by ID, child, rider, plate…" oninput="searchTable(this.value)" />
+    </div>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table class="ride-table" id="rideTable" aria-label="Scheduled rides">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Child</th>
+          <th>Rider</th>
+          <th>Vehicle</th>
+          <th>Plate / Helmet</th>
+          <th>Pickup Location</th>
+          <th>Time</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="rideBody">
+        <!-- Rows injected by JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <span class="pag-info" id="pagInfo">Showing 1–8 of 110 rides</span>
+    <div class="pag-btns">
+      <button class="pag-btn">← Prev</button>
+      <button class="pag-btn active">1</button>
+      <button class="pag-btn">2</button>
+      <button class="pag-btn">3</button>
+      <button class="pag-btn">Next →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const RIDES = [
+    { id: 'BK-01', child: 'Brian K.', rider: 'John', vehicle: 'TukTuk', plate: 'UBU-TTU', loc: 'Nile – Kasai Rd', time: '7:00 AM', status: 'assigned' },
+    { id: 'AM-02', child: 'Aisha M.', rider: 'Sarah', vehicle: 'Boda', plate: 'Helmet-45', loc: 'Kololo – Kampala Rd', time: '7:15 AM', status: 'assigned' },
+    { id: 'DO-03', child: 'Daniel O.', rider: 'Peter', vehicle: 'TukTuk-Shared', plate: 'UBE-234A', loc: 'Bweyogerere – Stage', time: '7:20 AM', status: 'in-progress' },
+    { id: 'GN-04', child: 'Gloria N.', rider: 'Ivan', vehicle: 'Boda', plate: 'Helmet-22', loc: 'Nalya – Next to Shell', time: '7:30 AM', status: 'assigned' }
+  ];
+
+  const statusMap = {
+    assigned: { label: 'Assigned', cls: 'badge-assigned', row: '' },
+    'in-progress': { label: 'In Progress', cls: 'badge-progress', row: 'row-progress' },
+    pending: { label: 'Pending', cls: 'badge-pending', row: 'row-pending' },
+    done: { label: 'Done', cls: 'badge-done', row: '' },
+  };
+
+  let currentFilter = 'all';
+  let currentSearch = '';
+
+  function renderTable() {
+    const body = document.getElementById('rideBody');
+    const list = RIDES.filter(r => {
+      const matchF = currentFilter === 'all' || r.status === currentFilter;
+      const q = currentSearch.toLowerCase();
+      const matchS = !q || [r.id, r.child, r.rider, r.plate, r.loc].some(v => v.toLowerCase().includes(q));
+      return matchF && matchS;
+    });
+    if (!list.length) {
+      body.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--gray-400);font-size:13px;">No rides match this filter.</td></tr>`;
+      return;
+    }
+    body.innerHTML = list.map(r => {
+      const s = statusMap[r.status] || statusMap.assigned;
+      return `
+      <tr class="${s.row}">
+        <td><span class="ride-id">${r.id}</span></td>
+        <td><span class="ride-name">${r.child}</span></td>
+        <td>${r.rider}</td>
+        <td>${r.vehicle}</td>
+        <td><span class="plate">${r.plate}</span></td>
+        <td>${r.loc}</td>
+        <td>${r.time}</td>
+        <td><span class="badge ${s.cls}">${s.label}</span></td>
+        <td><button class="view-btn" onclick="viewRide('${r.id}')">View</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  function filterTable(f, el) {
+    currentFilter = f;
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    renderTable();
+  }
+
+  function searchTable(q) {
+    currentSearch = q;
+    renderTable();
+  }
+
+  function viewRide(id) {
+    alert('Opening ride details for ' + id);
+  }
+
+  // date
+  const d = new Date();
+  document.getElementById('db-date').textContent = d.toLocaleDateString('en-UG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + ' · Kampala';
+
+  renderTable();
+</script>
+
+
+<style>
+  /* ── shared tokens ── */
+  :root {
+    --green-50: #E1F5EE;
+    --green-100: #9FE1CB;
+    --green-200: #5DCAA5;
+    --green-500: #1D9E75;
+    --green-700: #0F6E56;
+    --green-900: #085041;
+    --gray-50: #F7F8F9;
+    --gray-100: #EFF0F2;
+    --gray-200: #E0E2E6;
+    --gray-400: #9EA3AF;
+    --gray-600: #5C6270;
+    --gray-900: #0F1117;
+    --red-50: #FCEBEB;
+    --red-100: #F7C1C1;
+    --red-600: #A32D2D;
+    --amber-50: #FAEEDA;
+    --amber-600: #854F0B;
+    --blue-50: #E6F1FB;
+    --blue-600: #185FA5;
+  }
+
+  /* ── stat cards ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .stat-card.hero {
+    background: var(--green-700);
+    border-color: var(--green-700);
+  }
+
+  .stat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--gray-400);
+  }
+
+  .hero .stat-label {
+    color: var(--green-100);
+  }
+
+  .stat-val {
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--gray-900);
+  }
+
+  .hero .stat-val {
+    color: #fff;
+  }
+
+  .stat-sub {
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .sub-up {
+    color: var(--green-500);
+  }
+
+  .sub-mute {
+    color: var(--gray-400);
+  }
+
+  .hero .stat-sub {
+    color: var(--green-100);
+  }
+
+  /* ── mid row ── */
+  .mid-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  /* ── cards ── */
+  .card {
+    background: #fff;
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-900);
+  }
+
+  .card-meta {
+    font-size: 12px;
+    color: var(--gray-400);
+  }
+
+  /* ── bar chart ── */
+  .bar-chart {
+    padding: 16px 20px 12px;
+  }
+
+  .bars {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    height: 96px;
+    margin-bottom: 6px;
+  }
+
+  .bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .bar-fill {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    transition: opacity .15s;
+    cursor: default;
+  }
+
+  .bar-fill:hover {
+    opacity: .8;
+  }
+
+  .bar-day {
+    font-size: 11px;
+    color: var(--gray-400);
+  }
+
+  .chart-stats {
+    display: flex;
+    gap: 20px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--gray-100);
+  }
+
+  .cs-item p:first-child {
+    font-size: 11px;
+    color: var(--gray-400);
+  }
+
+  .cs-item p:last-child {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray-900);
+  }
+
+  /* ── alerts ── */
+  .alert-row {
+    display: flex;
+    gap: 12px;
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .alert-row:last-child {
+    border-bottom: none;
+  }
+
+  .a-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .a-dot.red {
+    background: #E24B4A;
+  }
+
+  .a-dot.amber {
+    background: #EF9F27;
+  }
+
+  .a-dot.blue {
+    background: #378ADD;
+  }
+
+  .a-body p:first-child {
+    font-size: 12.5px;
+    color: var(--gray-900);
+    line-height: 1.45;
+  }
+
+  .a-body p:last-child {
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-top: 3px;
+  }
+
+  .see-all-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 20px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--green-500);
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+    border-top: 1px solid var(--gray-100);
+    width: 100%;
+  }
+
+  /* ── pill filters ── */
+  .pill-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .pill {
+    padding: 5px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--gray-200);
+    background: #fff;
+    color: var(--gray-600);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+  }
+
+  .pill:hover {
+    background: var(--gray-50);
+  }
+
+  .pill.active {
+    background: var(--green-500);
+    border-color: var(--green-500);
+    color: #fff;
+  }
+
+  /* ── table ── */
+  .ride-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .ride-table thead tr {
+    background: var(--gray-50);
+  }
+
+  .ride-table th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--gray-400);
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  .ride-table td {
+    padding: 12px 16px;
+    color: var(--gray-600);
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: middle;
+  }
+
+  .ride-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .ride-table tbody tr:hover td {
+    background: var(--gray-50);
+  }
+
+  .ride-table tbody tr.row-progress td {
+    background: #FFFBF0;
+  }
+
+  .ride-table tbody tr.row-pending td {
+    background: #FFF8F8;
+  }
+
+  .ride-id {
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--green-500);
+  }
+
+  .ride-name {
+    font-weight: 600;
+    color: var(--gray-900);
+  }
+
+  .plate {
+    font-family: 'DM Mono', monospace;
+    font-size: 11.5px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .badge-assigned {
+    background: var(--green-50);
+    color: var(--green-700);
+  }
+
+  .badge-progress {
+    background: var(--amber-50);
+    color: var(--amber-600);
+  }
+
+  .badge-pending {
+    background: var(--red-50);
+    color: var(--red-600);
+  }
+
+  .badge-done {
+    background: var(--blue-50);
+    color: var(--blue-600);
+  }
+
+  .view-btn {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green-500);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  .view-btn:hover {
+    text-decoration: underline;
+  }
+
+  /* ── table toolbar ── */
+  .table-toolbar {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .table-search {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 7px 12px;
+    background: var(--gray-50);
+  }
+
+  .table-search input {
+    border: none;
+    background: none;
+    outline: none;
+    font-size: 12.5px;
+    color: var(--gray-900);
+    font-family: inherit;
+    width: 190px;
+  }
+
+  .table-search input::placeholder {
+    color: var(--gray-400);
+  }
+
+  /* ── pagination ── */
+  .pagination {
+    padding: 12px 20px;
+    border-top: 1px solid var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .pag-info {
+    font-size: 12px;
+    color: var(--gray-400);
+  }
+
+  .pag-btns {
+    display: flex;
+    gap: 5px;
+  }
+
+  .pag-btn {
+    padding: 5px 11px;
+    font-size: 12px;
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--gray-600);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .15s;
+  }
+
+  .pag-btn:hover {
+    background: var(--gray-50);
+  }
+
+  .pag-btn.active {
+    background: var(--green-500);
+    border-color: var(--green-500);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  /* ── action btns ── */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-500);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .15s;
+  }
+
+  .btn-primary:hover {
+    background: var(--green-700);
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    color: var(--gray-600);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .15s;
+  }
+
+  .btn-outline:hover {
+    background: var(--gray-50);
+  }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .page-header-left p:first-child {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gray-900);
+  }
+
+  .page-header-left p:last-child {
+    font-size: 13px;
+    color: var(--gray-400);
+    margin-top: 2px;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+  }
+</style>

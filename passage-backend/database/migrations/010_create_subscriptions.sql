@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  plan ENUM('free', 'basic', 'premium', 'enterprise') DEFAULT 'free',
+  start_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  end_date TIMESTAMP DEFAULT DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 30 DAY),
+  payment_id INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (payment_id) REFERENCES payments(id) ON DELETE SET NULL,
+  INDEX idx_user_id (user_id),
+  INDEX idx_end_date (end_date)
+);

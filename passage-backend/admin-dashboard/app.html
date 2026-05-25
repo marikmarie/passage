@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PASSAGE · Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+  <link rel="stylesheet" href="./assets/css/output.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-50:  #E1F5EE;
+      --green-100: #9FE1CB;
+      --green-200: #5DCAA5;
+      --green-500: #1D9E75;
+      --green-700: #0F6E56;
+      --green-900: #085041;
+      --gray-50:   #F7F8F9;
+      --gray-100:  #EFF0F2;
+      --gray-200:  #E0E2E6;
+      --gray-400:  #9EA3AF;
+      --gray-600:  #5C6270;
+      --gray-900:  #0F1117;
+      --red-50:    #FCEBEB;
+      --red-600:   #A32D2D;
+      --amber-50:  #FAEEDA;
+      --amber-600: #854F0B;
+      --blue-50:   #E6F1FB;
+      --blue-600:  #185FA5;
+      --sidebar-w: 248px;
+      --header-h:  60px;
+    }
+
+    html, body { height: 100%; margin: 0; padding: 0; font-family: 'DM Sans', sans-serif; background: var(--gray-50); color: var(--gray-900); }
+    body { display: flex; }
+
+    /* ---------- SIDEBAR ---------- */
+    .sidebar {
+      position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100%;
+      background: #fff; border-right: 1px solid var(--gray-200);
+      display: flex; flex-direction: column; z-index: 100;
+    }
+    .sidebar-brand {
+      display: flex; align-items: center; gap: 10px;
+      padding: 18px 20px; border-bottom: 1px solid var(--gray-100);
+    }
+    .brand-icon {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: var(--green-700); display: flex; align-items: center; justify-content: center;
+    }
+    .brand-icon svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; }
+    .brand-name { font-size: 15px; font-weight: 700; letter-spacing: 0.04em; color: var(--gray-900); }
+    .brand-sub  { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
+
+    .nav-section { padding: 20px 12px 0; }
+    .nav-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--gray-400); padding: 0 10px; margin-bottom: 6px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px; border-radius: 8px; margin-bottom: 2px;
+      font-size: 13.5px; font-weight: 500; color: var(--gray-600);
+      cursor: pointer; border: none; background: none; width: 100%; text-align: left;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-item:hover { background: var(--gray-50); color: var(--gray-900); }
+    .nav-item.active { background: var(--green-50); color: var(--green-700); font-weight: 600; }
+    .nav-item .ti { font-size: 17px; width: 20px; text-align: center; }
+    .nav-badge {
+      margin-left: auto; background: var(--red-50); color: var(--red-600);
+      font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto; padding: 14px 12px; border-top: 1px solid var(--gray-100);
+    }
+    .user-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; }
+    .user-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--green-50); color: var(--green-700);
+      font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .user-name { font-size: 13px; font-weight: 600; color: var(--gray-900); }
+    .user-role { font-size: 11px; color: var(--gray-400); }
+    .logout-btn {
+      width: 100%; padding: 8px; border-radius: 8px;
+      background: none; border: 1px solid var(--gray-200);
+      color: var(--red-600); font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .logout-btn:hover { background: var(--red-50); }
+
+    /* ---------- LAYOUT ---------- */
+    .layout { margin-left: var(--sidebar-w); display: flex; flex-direction: column; min-height: 100%; }
+
+    .topbar {
+      position: sticky; top: 0; z-index: 90;
+      height: var(--header-h); background: #fff; border-bottom: 1px solid var(--gray-100);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 14px; }
+    .page-title  { font-size: 17px; font-weight: 700; color: var(--gray-900); }
+    .search-box  {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px;
+      padding: 7px 12px; width: 220px;
+    }
+    .search-box input {
+      border: none; background: none; outline: none;
+      font-size: 13px; color: var(--gray-900); font-family: inherit; width: 100%;
+    }
+    .search-box input::placeholder { color: var(--gray-400); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .icon-btn {
+      width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--gray-200);
+      background: #fff; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--gray-600); font-size: 17px; position: relative;
+      transition: background 0.15s;
+    }
+    .icon-btn:hover { background: var(--gray-50); }
+    .notif-dot {
+      position: absolute; top: 7px; right: 7px;
+      width: 7px; height: 7px; border-radius: 50%; background: #E24B4A;
+      border: 1.5px solid #fff;
+    }
+
+    /* ---------- CONTENT ---------- */
+    #contentArea { flex: 1; padding: 28px; }
+
+    /* ---------- LOADING ---------- */
+    .page-loader {
+      display: flex; align-items: center; justify-content: center;
+      height: 240px; color: var(--gray-400); font-size: 14px; gap: 10px;
+    }
+
+    /* ---------- TOASTS ---------- */
+    #toast-container {
+      position: fixed; bottom: 24px; right: 24px; z-index: 999;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .toast {
+      background: var(--gray-900); color: #fff;
+      padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ---------- FORMS & MODALS ---------- */
+    .modal-form { display: flex; flex-direction: column; gap: 16px; margin-top: 4px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label { font-size: 12.5px; font-weight: 600; color: var(--gray-700); }
+    .form-input {
+      width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px;
+      font-size: 13.5px; color: var(--gray-900); font-family: inherit; outline: none;
+      background: #fff; transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .form-input:focus {
+      border-color: var(--green-500);
+      box-shadow: 0 0 0 3px var(--green-50);
+    }
+    .form-input::placeholder { color: var(--gray-400); }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div>
+      <div class="brand-name">PASSAGE</div>
+      <div class="brand-sub">Admin Panel</div>
+    </div>
+  </div>
+
+  <nav style="flex:1; overflow-y:auto; padding-bottom:12px;">
+    <div class="nav-section">
+      <div class="nav-label">Overview</div>
+      <button class="nav-item active" onclick="loadPage('pages/dashboard.html','dashboard','Dashboard')">
+        <i class="ti ti-layout-dashboard"></i> Dashboard
+      </button>
+      <button class="nav-item" onclick="loadPage('pages/tracking.html','tracking','Live Tracking')">
+        <i class="ti ti-map-pin"></i> Live Tracking
+      </button>
+    </div>
+
+    <div class="nav-section" style="margin-top:16px;">
+      <div class="nav-label">Management</div>
+      <button class="nav-item" onclick="loadPage('pages/users.html','users','Users')">
+        <i class="ti ti-users"></i> Users
+      </button>
+      <button class="nav-item" onclick="loadPage('pages/riders.html','riders','Riders')">
+        <i class="ti ti-motorbike"></i> Riders
+      </button>
+      <button class="nav-item" onclick="loadPage('pages/devices.html','devices','Devices')">
+        <i class="ti ti-device-watch"></i> Devices
+      </button>
+      <button class="nav-item" onclick="loadPage('pages/routes.html','routes','Routes')">
+        <i class="ti ti-route"></i> Routes
+      </button>
+    </div>
+
+    <div class="nav-section" style="margin-top:16px;">
+      <div class="nav-label">Operations</div>
+      <button class="nav-item" onclick="loadPage('pages/geofences.html','geofences','Geofences')">
+        <i class="ti ti-map-2"></i> Geofences
+      </button>
+      <button class="nav-item" onclick="loadPage('pages/alerts.html','alerts','Alerts')">
+        <i class="ti ti-bell-ringing"></i> Alerts
+        <span class="nav-badge">3</span>
+      </button>
+      <button class="nav-item" onclick="loadPage('pages/payments.html','payments','Payments')">
+        <i class="ti ti-credit-card"></i> Payments
+      </button>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-avatar">A</div>
+      <div>
+        <div class="user-name">Admin</div>
+        <div class="user-role">Super Admin</div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="logout()">
+      <i class="ti ti-logout"></i> Logout
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="layout" style="margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="page-title" id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <i class="ti ti-search" style="color:var(--gray-400);font-size:15px;" aria-hidden="true"></i>
+          <input type="text" placeholder="Search…" aria-label="Search" />
+        </div>
+        <button class="icon-btn" aria-label="Notifications">
+          <i class="ti ti-bell" aria-hidden="true"></i>
+          <span class="notif-dot"></span>
+        </button>
+        <button class="icon-btn" aria-label="Settings">
+          <i class="ti ti-settings" aria-hidden="true"></i>
+        </button>
+        <div class="user-avatar" style="width:34px;height:34px;font-size:13px;">A</div>
+      </div>
+    </header>
+
+    <main id="contentArea" aria-live="polite" style="flex:1;overflow-y:auto;padding:24px;">
+    <div class="page-loader"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;"></i> Loading…</div>
+  </main>
+</div>
+
+<!-- MODAL DIALOG -->
+<div id="modalDialog" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;">
+  <div style="background:white;border-radius:12px;padding:24px;max-width:500px;width:90%;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h2 id="modalTitle" style="font-size:18px;font-weight:700;color:#111827;"></h2>
+      <button onclick="closeModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#6b7280;">×</button>
+    </div>
+    <div id="modalContent" style="margin-bottom:20px;color:#4b5563;"></div>
+    <div id="modalActions" style="display:flex;gap:8px;justify-content:flex-end;"></div>
+  </div>
+</div>
+
+<div id="toast-container" aria-live="polite"></div>
+
+<style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+
+<script>
+  const pageTitles = {
+    dashboard:'Dashboard', tracking:'Live Tracking', users:'Users',
+    riders:'Riders', devices:'Devices', routes:'Routes',
+    geofences:'Geofences', alerts:'Alerts', payments:'Payments'
+  };
+
+  async function loadPage(url, key, title) {
+    document.getElementById('pageTitle').textContent = title || pageTitles[key] || 'Dashboard';
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    const area = document.getElementById('contentArea');
+    area.innerHTML = '<div class="page-loader"><i class="ti ti-loader-2" style="animation:spin 1s linear infinite;"></i> Loading…</div>';
+
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Not found');
+      const html = await res.text();
+      area.innerHTML = html;
+      // re-run any inline scripts
+      area.querySelectorAll('script').forEach(old => {
+        const s = document.createElement('script');
+        s.textContent = old.textContent;
+        old.replaceWith(s);
+      });
+    } catch {
+      area.innerHTML = `
+        <div style="text-align:center;padding:80px 20px;color:var(--gray-400);">
+          <i class="ti ti-file-off" style="font-size:40px;display:block;margin-bottom:12px;"></i>
+          <p style="font-size:14px;">Page not found — <strong>${url}</strong></p>
+          <p style="font-size:12px;margin-top:6px;">Create the file to enable this section.</p>
+        </div>`;
+    }
+  }
+
+  function showToast(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast'; t.textContent = msg;
+    document.getElementById('toast-container').appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+  }
+
+  function logout() {
+    if (confirm('Log out of PASSAGE Admin?')) {
+      localStorage.removeItem('admin_token');
+      window.location.href = './index.html';
+    }
+  }
+
+  // ==================== MODAL SYSTEM ====================
+  function openModal(title, content, actions = []) {
+    const modal = document.getElementById('modalDialog');
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalContent').innerHTML = content;
+    
+    const actionContainer = document.getElementById('modalActions');
+    actionContainer.innerHTML = '';
+    actions.forEach(action => {
+      const btn = document.createElement('button');
+      btn.textContent = action.label;
+      btn.className = action.className || 'bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-emerald-700';
+      btn.onclick = action.onclick;
+      actionContainer.appendChild(btn);
+    });
+    
+    modal.style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('modalDialog').style.display = 'none';
+  }
+
+  // ==================== FORM HANDLERS ====================
+  function handleAddUser() {
+    const form = `
+      <div class="modal-form">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" placeholder="e.g. Maria Asiimwe" class="form-input" id="userName">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" placeholder="maria@example.com" class="form-input" id="userEmail">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" placeholder="+256 700 000000" class="form-input" id="userPhone">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Role</label>
+          <select class="form-input" id="userRole">
+            <option>Parent</option>
+            <option>Rider</option>
+            <option>Admin</option>
+          </select>
+        </div>
+      </div>
+    `;
+    openModal('Add New User', form, [
+      { label: 'Cancel', className: 'bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold', onclick: closeModal },
+      { label: 'Create', className: 'bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold', onclick: () => { alert('User created!'); closeModal(); } }
+    ]);
+  }
+
+  function handleAddRider() {
+    const form = `
+      <div class="modal-form">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" placeholder="e.g. John Ssejjemba" class="form-input" id="riderName">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" placeholder="+256 700 000000" class="form-input" id="riderPhone">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Vehicle Type</label>
+          <select class="form-input" id="vehicleType">
+            <option>Boda (Motorcycle)</option>
+            <option>TukTuk</option>
+            <option>TukTuk-Shared</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Vehicle Plate/ID</label>
+          <input type="text" placeholder="e.g. UAX 123A" class="form-input" id="vehiclePlate">
+        </div>
+      </div>
+    `;
+    openModal('Register New Rider', form, [
+      { label: 'Cancel', className: 'bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold', onclick: closeModal },
+      { label: 'Register', className: 'bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold', onclick: () => { alert('Rider registered!'); closeModal(); } }
+    ]);
+  }
+
+  function handleRegisterDevice() {
+    const form = `
+      <div class="modal-form">
+        <div class="form-group">
+          <label class="form-label">Device IMEI</label>
+          <input type="text" placeholder="Enter 15-digit IMEI" class="form-input" id="deviceIMEI">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Assign to Child</label>
+          <select class="form-input" id="assignChild">
+            <option>-- Select Child --</option>
+            <option>Brian K.</option>
+            <option>Aisha M.</option>
+            <option>Daniel O.</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Device Model</label>
+          <input type="text" placeholder="e.g. PASSAGE Watch v1" class="form-input" id="deviceModel">
+        </div>
+      </div>
+    `;
+    openModal('Register Wearable Device', form, [
+      { label: 'Cancel', className: 'bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold', onclick: closeModal },
+      { label: 'Register', className: 'bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold', onclick: () => { alert('Device registered!'); closeModal(); } }
+    ]);
+  }
+
+  function handleCreateGeofence() {
+    const form = `
+      <div class="modal-form">
+        <div class="form-group">
+          <label class="form-label">Geofence Name</label>
+          <input type="text" placeholder="e.g. Central School" class="form-input" id="gfName">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Zone Type</label>
+          <select class="form-input" id="gfType">
+            <option>Home</option>
+            <option>School</option>
+            <option>Shopping</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Radius (meters)</label>
+          <input type="number" placeholder="e.g. 500" class="form-input" id="gfRadius">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location/Address</label>
+          <input type="text" placeholder="Search address or drop pin..." class="form-input" id="gfLocation">
+        </div>
+      </div>
+    `;
+    openModal('Create Safe Zone', form, [
+      { label: 'Cancel', className: 'bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold', onclick: closeModal },
+      { label: 'Create', className: 'bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold', onclick: () => { alert('Geofence created!'); closeModal(); } }
+    ]);
+  }
+
+  function handleAddRide() {
+    const form = `
+      <div class="modal-form">
+        <div class="form-group">
+          <label class="form-label">Child</label>
+          <select class="form-input" id="childId">
+            <option>-- Select Child --</option>
+            <option>BK-01 (Brian K.)</option>
+            <option>AM-02 (Aisha M.)</option>
+            <option>DO-03 (Daniel O.)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rider</label>
+          <select class="form-input" id="riderId">
+            <option>-- Select Rider --</option>
+            <option>John Ssejjemba</option>
+            <option>Grace Nakato</option>
+            <option>Peter Mwale</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pickup Time</label>
+          <input type="time" class="form-input" id="pickupTime">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pickup Location</label>
+          <input type="text" placeholder="Enter location..." class="form-input" id="pickupLoc">
+        </div>
+      </div>
+    `;
+    openModal('Schedule New Ride', form, [
+      { label: 'Cancel', className: 'bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold', onclick: closeModal },
+      { label: 'Schedule', className: 'bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold', onclick: () => { alert('Ride scheduled!'); closeModal(); } }
+    ]);
+  }
+
+  function handleCreateRoute() {
+    const form = `
+      <div class="modal-form">
+        <div class="form-group">
+          <label class="form-label">Start Location</label>
+          <input type="text" placeholder="e.g. Central School" class="form-input" id="routeStart">
+        </div>
+        <div class="form-group">
+          <label class="form-label">End Location</label>
+          <input type="text" placeholder="e.g. Plot 12, Kampala" class="form-input" id="routeEnd">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Distance (km)</label>
+          <input type="number" placeholder="e.g. 15.5" class="form-input" id="routeDist">
+        </div>
+      </div>
+    `;
+    openModal('Create New Route', form, [
+      { label: 'Cancel', className: 'bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold', onclick: closeModal },
+      { label: 'Create', className: 'bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold', onclick: () => { alert('Route created!'); closeModal(); } }
+    ]);
+  }
+
+  function handleViewDetails(itemId, itemType) {
+    let content = `<p class="text-gray-700"><strong>ID:</strong> ${itemId}</p><p class="text-gray-700"><strong>Type:</strong> ${itemType}</p><p class="text-gray-700 mt-4">Full details would load from API here.</p>`;
+    openModal(`${itemType} Details`, content, [
+      { label: 'Close', className: 'bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold', onclick: closeModal }
+    ]);
+  }
+
+  function handleTrack(itemId) {
+    const content = `<p class="text-gray-700">Real-time tracking for device <strong>${itemId}</strong></p><div class="w-full h-64 bg-gray-100 rounded-lg mt-4 flex items-center justify-center"><p class="text-gray-400">Map would load here</p></div>`;
+    openModal('Live Tracking', content, [
+      { label: 'Close', className: 'bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold', onclick: closeModal }
+    ]);
+  }
+
+  function handleRespond(alertId) {
+    const form = `
+      <div class="modal-form">
+        <p class="text-gray-700 font-semibold text-sm">Alert ID: ${alertId}</p>
+        <div class="form-group">
+          <label class="form-label">Response Action</label>
+          <textarea placeholder="Describe the action taken..." class="form-input" style="height: 100px;" id="responseText"></textarea>
+        </div>
+      </div>
+    `;
+    openModal('Respond to Alert', form, [
+      { label: 'Cancel', className: 'bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold', onclick: closeModal },
+      { label: 'Submit', className: 'bg-red-600 text-white px-4 py-2 rounded-lg font-semibold', onclick: () => { alert('Response submitted!'); closeModal(); } }
+    ]);
+  }
+
+  function handleExport() {
+    alert('Exporting data...\nThis would trigger a CSV/Excel download from the API.');
+  }
+
+  function handleFilter() {
+    const form = `
+      <div class="modal-form">
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-input" id="filterStatus">
+            <option>All Statuses</option>
+            <option>Success</option>
+            <option>Pending</option>
+            <option>Failed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date Range</label>
+          <select class="form-input" id="filterDateRange">
+            <option>Today</option>
+            <option>Last 7 Days</option>
+            <option>This Month</option>
+            <option>Custom Range</option>
+          </select>
+        </div>
+      </div>
+    `;
+    openModal('Filter Transactions', form, [
+      { label: 'Cancel', className: 'bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold', onclick: closeModal },
+      { label: 'Apply', className: 'bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold', onclick: () => { alert('Filter applied!'); closeModal(); } }
+    ]);
+  }
+
+  // Close modal on background click
+  window.addEventListener('click', (e) => {
+    const modal = document.getElementById('modalDialog');
+    if (e.target === modal) closeModal();
+  });
+
+  window.addEventListener('load', () => {
+    // Remove auth gate for dev; re-enable before production:
+    // if (!localStorage.getItem('admin_token')) { window.location.href='./index.html'; return; }
+    loadPage('pages/dashboard.html', 'dashboard', 'Dashboard');
+  });
+
+</script>
+</body>
+</html>

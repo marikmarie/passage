@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS trips (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  rider_id INT NOT NULL,
+  device_id INT NOT NULL,
+  start_time TIMESTAMP NOT NULL,
+  end_time TIMESTAMP NULL,
+  distance_km DECIMAL(6, 2) DEFAULT 0,
+  status ENUM('active', 'completed', 'cancelled') DEFAULT 'active',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (rider_id) REFERENCES riders(id) ON DELETE CASCADE,
+  FOREIGN KEY (device_id) REFERENCES devices(id) ON DELETE CASCADE
+);
