@@ -1,71 +1,68 @@
 import { Request, Response } from 'express';
 import { usersService } from './users.service';
-import { sendSuccess, sendError } from '../../utils/response.util';
+import { BaseController } from '../base.controller';
 import { AuthenticatedRequest } from '../../middleware/auth.middleware';
+import { NotFoundError } from '../../utils/errors.util';
 
-export class UsersController {
+class UsersController extends BaseController {
   async getAll(req: Request, res: Response): Promise<void> {
     try {
-      const page = parseInt((req.query.page as string) || '1') || 1;
-      const limit = parseInt((req.query.limit as string) || '10') || 10;
-      const role = req.query.role;
-      const result = await usersService.getAllUsers(page, limit, role as string);
-      sendSuccess(res, 'Users retrieved successfully', result);
-    } catch (error: any) {
-      sendError(res, error.message, 500);
+      const { page, limit } = this.parsePaginationParams(req.query);
+      const role = req.query.role ? String(req.query.role) : undefined;
+
+      const result = await usersService.getAllUsers(page, limit, role);
+      
+      const pagination = this.calculatePaginationMeta(result.total, page, limit);
+      this.sendPaginatedSuccess(res, 'Users retrieved successfully', result.data, pagination);
+    } catch (error) {
+      this.handleApiError(res, error);
     }
   }
 
   async getById(req: Request, res: Response): Promise<void> {
     try {
-      const id = Array.isArray(req.params.id) ? req.params.id[0] : (req.params.id || '');
-      const user = await usersService.getUserById(parseInt(id));
+      const id = this.parseId(req.params.id);
+      const user = await usersService.getUserById(id);
 
-      if (!user) {
-        sendError(res, 'User not found', 404);
-        return;
-      }
+      const validatedUser = this.ensureResourceExists(user, 'User');
 
-      const { password_hash: _, ...userWithoutPassword } = user;
-      sendSuccess(res, 'User retrieved successfully', userWithoutPassword);
-    } catch (error: any) {
-      sendError(res, error.message, 500);
+      // Remove password hash from response
+      const { password_hash: _, ...userWithoutPassword } = validatedUser;
+      this.sendSuccess(res, 'User retrieved successfully', userWithoutPassword);
+    } catch (error) {
+      this.handleApiError(res, error);
     }
   }
 
   async update(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      const id = Array.isArray(req.params.id) ? req.params.id[0] : (req.params.id || '');
+      const id = this.parseId(req.params.id);
       const updates = req.body;
 
-      const user = await usersService.updateUser(parseInt(id), updates);
+      const user = await usersService.updateUser(id, updates);
 
-      if (!user) {
-        sendError(res, 'User not found', 404);
-        return;
-      }
+      const validatedUser = this.ensureResourceExists(user, 'User');
 
-      const { password_hash: _, ...userWithoutPassword } = user;
-      sendSuccess(res, 'User updated successfully', userWithoutPassword);
-    } catch (error: any) {
-      sendError(res, error.message, 500);
+      // Remove password hash from response
+      const { password_hash: _, ...userWithoutPassword } = validatedUser;
+      this.sendSuccess(res, 'User updated successfully', userWithoutPassword);
+    } catch (error) {
+      this.handleApiError(res, error);
     }
   }
 
   async delete(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      const id = Array.isArray(req.params.id) ? req.params.id[0] : (req.params.id || '');
-
-      const success = await usersService.deleteUser(parseInt(id));
+      const id = this.parseId(req.params.id);
+      const success = await usersService.deleteUser(id);
 
       if (!success) {
-        sendError(res, 'User not found', 404);
-        return;
+        throw new NotFoundError('User');
       }
 
-      sendSuccess(res, 'User deleted successfully', { id: parseInt(id) });
-    } catch (error: any) {
-      sendError(res, error.message, 500);
+      this.sendSuccess(res, 'User deleted successfully', { id });
+    } catch (error) {
+      this.handleApiError(res, error);
     }
   }
 }
