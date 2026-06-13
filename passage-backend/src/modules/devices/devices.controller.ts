@@ -29,29 +29,16 @@ class DevicesController extends BaseController {
     }
   }
 
-  async getByRiderId(req: Request, res: Response): Promise<void> {
-    try {
-      const riderId = this.parseId(req.params.riderId);
-      const device = await devicesService.getDeviceByRiderId(riderId);
-
-      this.ensureResourceExists(device, 'Device');
-      this.sendSuccess(res, 'Device retrieved successfully', device);
-    } catch (error) {
-      this.handleApiError(res, error);
-    }
-  }
-
   async create(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      const { rider_id, imei, sim_number, firmware_version } = req.body;
+      const { imei, sim_number, firmware_version } = req.body;
 
       this.validateRequiredFields(
         req.body,
-        ['rider_id', 'imei', 'sim_number', 'firmware_version']
+        ['imei', 'sim_number', 'firmware_version']
       );
 
       const device = await devicesService.createDevice({
-        rider_id,
         imei,
         sim_number,
         firmware_version,

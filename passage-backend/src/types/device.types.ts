@@ -2,7 +2,6 @@ export type DeviceStatus = 'active' | 'inactive' | 'lost' | 'damaged' | 'offline
 
 export interface Device {
   id: number;
-  rider_id: number;
   imei: string;
   sim_number: string;
   firmware_version: string;
@@ -14,7 +13,6 @@ export interface Device {
 }
 
 export interface CreateDeviceDTO {
-  rider_id: number;
   imei: string;
   sim_number: string;
   firmware_version: string;

@@ -2,7 +2,7 @@ import { pool } from '../../config/database';
 import { User, CreateUserDTO } from '../../types/user.types';
 import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 
-export class UserModel {
+export class AuthModel {
   async findById(id: number): Promise<User | null> {
     const [rows] = await pool.query<RowDataPacket[]>(
       'SELECT * FROM users WHERE id = ?',
@@ -19,10 +19,41 @@ export class UserModel {
     return rows.length ? (rows[0] as User) : null;
   }
 
-  async create(user: CreateUserDTO & { password_hash: string }): Promise<User> {
+  async findByPhoneNumber(phoneNumber: string): Promise<User | null> {
+    const [rows] = await pool.query<RowDataPacket[]>(
+      'SELECT * FROM users WHERE phone_number = ?',
+      [phoneNumber]
+    );
+    return rows.length ? (rows[0] as User) : null;
+  }
+
+  async saveOtpCode(phoneNumber: string, otpCode: string, expiresAt: Date): Promise<void> {
+    await pool.query(
+      'UPDATE users SET otp_code = ?, otp_expires_at = ? WHERE phone_number = ?',
+      [otpCode, expiresAt, phoneNumber]
+    );
+  }
+
+  async clearOtp(phoneNumber: string): Promise<void> {
+    await pool.query(
+      'UPDATE users SET otp_code = NULL, otp_expires_at = NULL WHERE phone_number = ?',
+      [phoneNumber]
+    );
+  }
+
+  async create(user: CreateUserDTO & { password_hash?: string | null }): Promise<User> {
     const [result] = await pool.query<ResultSetHeader>(
-      'INSERT INTO users (name, email, password_hash, role, phone, status) VALUES (?, ?, ?, ?, ?, ?)',
-      [user.name, user.email, user.password_hash, user.role, user.phone || null, 'active']
+      'INSERT INTO users (name, email, password_hash, role, phone_number, status, otp_code, otp_expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [
+        user.name,
+        user.email || null,
+        user.password_hash || null,
+        user.role,
+        user.phone_number || null,
+        'active',
+        null,
+        null,
+      ]
     );
     
     const newUser = await this.findById(result.insertId);
@@ -70,4 +101,4 @@ export class UserModel {
   }
 }
 
-export const userModel = new UserModel();
+export const authModel = new AuthModel();

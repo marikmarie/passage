@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import authRoutes from '../modules/auth/auth.routes';
 import usersRoutes from '../modules/users/users.routes';
 import ridersRoutes from '../modules/riders/riders.routes';
+import kidsRoutes from '../modules/kids/kids.routes';
 import devicesRoutes from '../modules/devices/devices.routes';
 import trackingRoutes from '../modules/tracking/tracking.routes';
 import tripsRoutes from '../modules/trips/trips.routes';
@@ -45,6 +46,7 @@ export const createApp = (): Application => {
   app.use('/api/v1/auth', authRoutes);
   app.use('/api/v1/users', usersRoutes);
   app.use('/api/v1/riders', ridersRoutes);
+  app.use('/api/v1/kids', kidsRoutes);
   app.use('/api/v1/devices', devicesRoutes);
   app.use('/api/v1/tracking', trackingRoutes);
   app.use('/api/v1/trips', tripsRoutes);

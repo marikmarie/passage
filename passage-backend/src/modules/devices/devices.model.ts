@@ -11,14 +11,6 @@ export class DevicesModel {
     return rows.length ? (rows[0] as Device) : null;
   }
 
-  async findByRiderId(riderId: number): Promise<Device | null> {
-    const [rows] = await pool.query<RowDataPacket[]>(
-      'SELECT * FROM devices WHERE rider_id = ?',
-      [riderId]
-    );
-    return rows.length ? (rows[0] as Device) : null;
-  }
-
   async findAll(limit: number = 10, offset: number = 0): Promise<{ devices: Device[]; total: number }> {
     const [rows] = await pool.query<RowDataPacket[]>(
       'SELECT * FROM devices LIMIT ? OFFSET ?',
@@ -37,8 +29,8 @@ export class DevicesModel {
 
   async create(data: CreateDeviceDTO): Promise<Device> {
     const [result] = await pool.query<ResultSetHeader>(
-      'INSERT INTO devices (rider_id, imei, sim_number, firmware_version, battery_level, status) VALUES (?, ?, ?, ?, ?, ?)',
-      [data.rider_id, data.imei, data.sim_number, data.firmware_version, 100, 'active']
+      'INSERT INTO devices (imei, sim_number, firmware_version, battery_level, status) VALUES (?, ?, ?, ?, ?)',
+      [data.imei, data.sim_number, data.firmware_version, 100, 'active']
     );
 
     const device = await this.findById(result.insertId);

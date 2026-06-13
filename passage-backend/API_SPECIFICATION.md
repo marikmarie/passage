@@ -76,7 +76,7 @@ Authorization: Bearer <JWT_TOKEN>
 ```json
 {
   "name": "John Doe",
-  "email": "john@example.com",
+  "email": "john@gmail.com",
   "password": "securePassword123",
   "phone": "+1234567890",
   "role": "parent"
@@ -100,7 +100,7 @@ Authorization: Bearer <JWT_TOKEN>
   "data": {
     "id": 1,
     "name": "John Doe",
-    "email": "john@example.com",
+    "email": "john@gmail.com",
     "phone": "+1234567890",
     "role": "parent",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -124,7 +124,7 @@ Authorization: Bearer <JWT_TOKEN>
 **Request Body:**
 ```json
 {
-  "email": "john@example.com",
+  "email": "john@gmail.com",
   "password": "securePassword123"
 }
 ```
@@ -143,7 +143,7 @@ Authorization: Bearer <JWT_TOKEN>
   "data": {
     "id": 1,
     "name": "John Doe",
-    "email": "john@example.com",
+    "email": "john@gmail.com",
     "role": "parent",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "expires_in": 86400
@@ -172,7 +172,7 @@ Authorization: Bearer <JWT_TOKEN>
   "data": {
     "id": 1,
     "name": "John Doe",
-    "email": "john@example.com",
+    "email": "john@gmail.com",
     "phone": "+1234567890",
     "role": "parent",
     "created_at": "2026-05-25T10:30:00Z",
@@ -212,7 +212,7 @@ Authorization: Bearer <JWT_TOKEN>
     {
       "id": 1,
       "name": "John Doe",
-      "email": "john@example.com",
+      "email": "john@gmail.com",
       "phone": "+1234567890",
       "role": "parent",
       "created_at": "2026-05-25T10:30:00Z"
@@ -249,7 +249,7 @@ Authorization: Bearer <JWT_TOKEN>
   "data": {
     "id": 1,
     "name": "John Doe",
-    "email": "john@example.com",
+    "email": "john@gmail.com",
     "phone": "+1234567890",
     "role": "parent",
     "created_at": "2026-05-25T10:30:00Z"
@@ -297,7 +297,7 @@ Authorization: Bearer <JWT_TOKEN>
   "data": {
     "id": 1,
     "name": "Jane Doe",
-    "email": "john@example.com",
+    "email": "john@gmail.com",
     "phone": "+0987654321",
     "role": "parent",
     "updated_at": "2026-05-25T11:00:00Z"
@@ -1944,7 +1944,7 @@ Authorization: Bearer <JWT_TOKEN>
     {
       "id": 1,
       "name": "John Doe",
-      "email": "john@example.com",
+      "email": "john@gmail.com",
       "role": "parent",
       "status": "active",
       "created_at": "2026-05-25T10:30:00Z",

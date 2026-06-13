@@ -7,10 +7,6 @@ export class DevicesService {
     return devicesModel.findById(id);
   }
 
-  async getDeviceByRiderId(riderId: number): Promise<Device | null> {
-    return devicesModel.findByRiderId(riderId);
-  }
-
   async getAllDevices(page?: string | number, limit?: string | number): Promise<any> {
     const { page: p, limit: l } = getPaginationOptions(page, limit);
     const offset = calculateOffset(p, l);
