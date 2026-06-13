@@ -1,2 +1,0 @@
-ALTER TABLE devices
-  DROP COLUMN IF EXISTS rider_id;

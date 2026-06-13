@@ -4,6 +4,34 @@ import { sendSuccess, sendError } from "../../utils/response.util";
 import { AuthenticatedRequest } from "../../middleware/auth.middleware";
 
 export class TripsController {
+
+
+async verifyTrip(req: AuthenticatedRequest, res: Response): Promise<void> {
+
+try {
+        const { tripId, verificationToken } = req.body;
+        const riderId = req.user?.id;
+
+        if (!riderId) {
+          sendError(res, "Unauthorized", 401);
+          return;
+        }
+
+        if (!tripId || !verificationToken) {
+          sendError(res, "tripId and verificationToken are required", 400);
+          return;
+        }
+        
+        await tripsService.validateQRToken(tripId, verificationToken, riderId);
+        
+        await tripsService.updateTripState(tripId, 'PICKUP_CONFIRMED');
+        
+        res.status(200).json({ success: true, message: "Verification successful. Status updated to PICKUP_CONFIRMED." });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "Verification failed";
+        sendError(res, message, 400);
+    }
+}
   async getById(req: Request, res: Response): Promise<void> {
     try {
       const id = Number(req.params.id);
@@ -15,8 +43,9 @@ export class TripsController {
       }
 
       sendSuccess(res, "Trip retrieved successfully", trip);
-    } catch (error: any) {
-      sendError(res, error.message, 500);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to retrieve trip";
+      sendError(res, message, 500);
     }
   }
 
@@ -32,8 +61,9 @@ export class TripsController {
         parseInt(String(limit)),
       );
       sendSuccess(res, "Trips retrieved successfully", result);
-    } catch (error: any) {
-      sendError(res, error.message, 500);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to retrieve trips";
+      sendError(res, message, 500);
     }
   }
 
@@ -48,8 +78,9 @@ export class TripsController {
 
       const trip = await tripsService.createTrip({ rider_id, device_id });
       sendSuccess(res, "Trip created successfully", trip, 201);
-    } catch (error: any) {
-      sendError(res, error.message, 500);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to create trip";
+      sendError(res, message, 500);
     }
   }
 
@@ -71,8 +102,9 @@ export class TripsController {
       }
 
       sendSuccess(res, "Trip ended successfully", trip);
-    } catch (error: any) {
-      sendError(res, error.message, 500);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to end trip";
+      sendError(res, message, 500);
     }
   }
 
@@ -87,8 +119,9 @@ export class TripsController {
       }
 
       sendSuccess(res, "Trip cancelled successfully", trip);
-    } catch (error: any) {
-      sendError(res, error.message, 500);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to cancel trip";
+      sendError(res, message, 500);
     }
   }
 }

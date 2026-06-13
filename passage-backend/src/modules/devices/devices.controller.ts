@@ -1,17 +1,99 @@
-import { Request, Response } from 'express';
-import { devicesService } from './devices.service';
-import { BaseController } from '../base.controller';
-import { AuthenticatedRequest } from '../../middleware/auth.middleware';
-import { ValidationError, NotFoundError } from '../../utils/errors.util';
+import { Request, Response } from "express";
+import { devicesService } from "./devices.service";
+import { BaseController } from "../base.controller";
+import { AuthenticatedRequest } from "../../middleware/auth.middleware";
+import { ValidationError, NotFoundError } from "../../utils/errors.util";
 
 class DevicesController extends BaseController {
+  async getWatchState(req: Request, res: Response): Promise<void> {
+    try {
+      const deviceId = this.parseId(req.params.deviceId, "device ID");
+      const stateData = await devicesService.determineWatchState(deviceId);
+
+      res.status(200).json({
+        state: stateData.state,
+        tripId: stateData.tripId,
+        message: stateData.message,
+        trackingIntervalSeconds: stateData.interval,
+      });
+    } catch (error) {
+      this.handleApiError(res, error);
+    }
+  }
+
+  async sendLocation(req: Request, res: Response): Promise<void> {
+    try {
+      const {
+        deviceId,
+        tripId,
+        lat,
+        lng,
+        accuracy,
+        speed,
+        bearing,
+        battery,
+        timestamp,
+      } = req.body;
+      await devicesService.saveLocation({
+        deviceId,
+        tripId,
+        lat,
+        lng,
+        accuracy,
+        speed,
+        bearing,
+        battery,
+        timestamp,
+      });
+      res.status(200).json({ success: true });
+    } catch (error) {
+      this.handleApiError(res, error);
+    }
+  }
+
+
+  async sendEvent(req: Request, res: Response): Promise<void> {
+    try {
+      const { deviceId, tripId, eventType, battery, timestamp } = req.body;
+      await devicesService.processEvent(deviceId, tripId, eventType, battery, timestamp);
+      res.status(200).json({ success: true });
+    } catch (error) {
+      this.handleApiError(res, error);
+    }
+  }
+
+
+  async requestVerificationToken(req: Request, res: Response): Promise<void> {
+    try {
+      const { deviceId, tripId } = req.body;
+      const tokenData = await devicesService.generateVerificationToken(deviceId, tripId);
+
+      res.status(200).json({
+        verificationToken: tokenData.token,
+        expiresAt: tokenData.expiresAt,
+      });
+    } catch (error) {
+      this.handleApiError(res, error);
+    }
+  }
+
+
   async getAll(req: Request, res: Response): Promise<void> {
     try {
       const { page, limit } = this.parsePaginationParams(req.query);
       const result = await devicesService.getAllDevices(page, limit);
 
-      const pagination = this.calculatePaginationMeta(result.total, page, limit);
-      this.sendPaginatedSuccess(res, 'Devices retrieved successfully', result.data, pagination);
+      const pagination = this.calculatePaginationMeta(
+        result.total,
+        page,
+        limit,
+      );
+      this.sendPaginatedSuccess(
+        res,
+        "Devices retrieved successfully",
+        result.data,
+        pagination,
+      );
     } catch (error) {
       this.handleApiError(res, error);
     }
@@ -22,8 +104,8 @@ class DevicesController extends BaseController {
       const id = this.parseId(req.params.id);
       const device = await devicesService.getDeviceById(id);
 
-      this.ensureResourceExists(device, 'Device');
-      this.sendSuccess(res, 'Device retrieved successfully', device);
+      this.ensureResourceExists(device, "Device");
+      this.sendSuccess(res, "Device retrieved successfully", device);
     } catch (error) {
       this.handleApiError(res, error);
     }
@@ -33,10 +115,11 @@ class DevicesController extends BaseController {
     try {
       const { imei, sim_number, firmware_version } = req.body;
 
-      this.validateRequiredFields(
-        req.body,
-        ['imei', 'sim_number', 'firmware_version']
-      );
+      this.validateRequiredFields(req.body, [
+        "imei",
+        "sim_number",
+        "firmware_version",
+      ]);
 
       const device = await devicesService.createDevice({
         imei,
@@ -44,7 +127,7 @@ class DevicesController extends BaseController {
         firmware_version,
       });
 
-      this.sendSuccess(res, 'Device created successfully', device, 201);
+      this.sendSuccess(res, "Device created successfully", device, 201);
     } catch (error) {
       this.handleApiError(res, error);
     }
@@ -57,8 +140,8 @@ class DevicesController extends BaseController {
 
       const device = await devicesService.updateDevice(id, updates);
 
-      this.ensureResourceExists(device, 'Device');
-      this.sendSuccess(res, 'Device updated successfully', device);
+      this.ensureResourceExists(device, "Device");
+      this.sendSuccess(res, "Device updated successfully", device);
     } catch (error) {
       this.handleApiError(res, error);
     }
@@ -70,10 +153,10 @@ class DevicesController extends BaseController {
       const success = await devicesService.deleteDevice(id);
 
       if (!success) {
-        throw new NotFoundError('Device');
+        throw new NotFoundError("Device");
       }
 
-      this.sendSuccess(res, 'Device deleted successfully', { id });
+      this.sendSuccess(res, "Device deleted successfully", { id });
     } catch (error) {
       this.handleApiError(res, error);
     }

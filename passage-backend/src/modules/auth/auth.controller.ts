@@ -99,6 +99,7 @@ export class AuthController {
       sendError(res, error.message, 500);
     }
   }
+
 }
 
 export const authController = new AuthController();
