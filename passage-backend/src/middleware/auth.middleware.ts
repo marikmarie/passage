@@ -21,11 +21,12 @@ export const authenticateToken = (
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: 'Access denied. No token provided.',
         code: 'NO_TOKEN'
       });
+      return;
     }
 
     const decoded = jwt.verify(token, env.JWT_SECRET) as any;
@@ -33,17 +34,19 @@ export const authenticateToken = (
     next();
   } catch (error: any) {
     if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: 'Token has expired.',
         code: 'TOKEN_EXPIRED'
       });
+      return;
     }
 
-    return res.status(403).json({
+    res.status(403).json({
       success: false,
       message: 'Invalid or malformed token.',
       code: 'INVALID_TOKEN'
     });
+    return;
   }
 };

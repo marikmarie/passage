@@ -21,6 +21,7 @@ class DevicesController extends BaseController {
     }
   }
 
+
   async sendLocation(req: Request, res: Response): Promise<void> {
     try {
       const {
