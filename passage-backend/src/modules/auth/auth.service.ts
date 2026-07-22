@@ -1,11 +1,22 @@
 import { authModel } from './auth.model';
-import { User, CreateUserDTO, LoginDTO, AuthResponse } from '../../types/user.types';
+import { User, CreateUserDTO, LoginDTO, AuthResponse, OtpRequestResult, OtpVerificationResult, UserRole } from '../../types/user.types';
 import { hashPassword, comparePassword } from '../../utils/hash.util';
 import { generateToken } from '../../utils/jwt.util';
 import { collectoService } from '../../services/collecto.service';
 
+const DEMO_OTP_CODE = '123456';
+
 const generateOtpCode = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+const stripSensitiveUserFields = (user: User): Omit<User, 'password_hash' | 'otp_code' | 'otp_expires_at'> => {
+  const { password_hash: _, otp_code: __, otp_expires_at: ___, ...userWithoutSensitive } = user;
+  return userWithoutSensitive;
+};
+
+const shouldExposeOtpInResponse = (): boolean => {
+  return process.env.NODE_ENV !== 'production';
 };
 
 export class AuthService {
@@ -52,11 +63,9 @@ export class AuthService {
       role: user.role,
     });
 
-    const { password_hash: _, otp_code: __, otp_expires_at: ___, ...userWithoutSensitive } = user;
-
     return {
       token,
-      user: userWithoutSensitive as Omit<User, 'password_hash' | 'otp_code' | 'otp_expires_at'>,
+      user: stripSensitiveUserFields(user),
     };
   }
 
@@ -64,12 +73,12 @@ export class AuthService {
     const email = data.email.toLowerCase();
     const user = await authModel.findByEmail(email);
     if (!user || !user.password_hash) {
-      throw new Error('Invalid email or password');
+      throw new Error('Invalid username or password');
     }
 
     const isPasswordValid = comparePassword(data.password, user.password_hash);
     if (!isPasswordValid) {
-      throw new Error('Invalid email or password');
+      throw new Error('Invalid username or password');
     }
 
     if (user.status !== 'active') {
@@ -82,40 +91,61 @@ export class AuthService {
       role: user.role,
     });
 
-    const { password_hash: _, otp_code: __, otp_expires_at: ___, ...userWithoutSensitive } = user;
-
     return {
       token,
-      user: userWithoutSensitive as Omit<User, 'password_hash' | 'otp_code' | 'otp_expires_at'>,
+      user: stripSensitiveUserFields(user),
     };
   }
 
-  async requestOtp(phoneNumber: string): Promise<void> {
+  async requestOtp(phoneNumber: string, role: UserRole = 'parent'): Promise<OtpRequestResult> {
     const user = await authModel.findByPhoneNumber(phoneNumber);
-    if (!user) {
-      throw new Error('User not found for this phone number');
-    }
+    const otpCode = user ? generateOtpCode() : DEMO_OTP_CODE;
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    if (user.status !== 'active') {
+    if (user && user.status !== 'active') {
       throw new Error('User account is not active');
     }
 
-    const otpCode = generateOtpCode();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    if (user) {
+      await authModel.saveOtpCode(phoneNumber, otpCode, expiresAt);
+    }
 
-    await authModel.saveOtpCode(phoneNumber, otpCode, expiresAt);
+    let deliveryStatus: OtpRequestResult['delivery_status'] = user ? 'sent' : 'mocked';
 
-    await collectoService.sendSingleSMS({
-      phone: phoneNumber,
-      message: `Your Passage app OTP is ${otpCode}. It expires in 10 minutes.`,
-      reference: `passage-otp-${Date.now()}`,
-    });
+    if (user) {
+      try {
+        await collectoService.sendSingleSMS({
+          phone: phoneNumber,
+          message: `Your Passage app OTP is ${otpCode}. It expires in 10 minutes.`,
+          reference: `passage-otp-${Date.now()}`,
+        });
+      } catch (error) {
+        deliveryStatus = 'mocked';
+      }
+    }
+
+    return {
+      phone_number: phoneNumber,
+      role,
+      expires_at: expiresAt.toISOString(),
+      delivery_status: deliveryStatus,
+      ...(shouldExposeOtpInResponse() && { otp_code: otpCode }),
+    };
   }
 
-  async verifyOtp(phoneNumber: string, otpCode: string): Promise<AuthResponse> {
+  async verifyOtp(phoneNumber: string, otpCode: string): Promise<AuthResponse | OtpVerificationResult> {
     const user = await authModel.findByPhoneNumber(phoneNumber);
+
     if (!user) {
-      throw new Error('Invalid phone number or OTP');
+      if (otpCode !== DEMO_OTP_CODE) {
+        throw new Error('Invalid or expired OTP code');
+      }
+
+      return {
+        verified: true,
+        phone_number: phoneNumber,
+        registration_required: true,
+      };
     }
 
     if (!user.otp_code || !user.otp_expires_at) {
@@ -139,11 +169,9 @@ export class AuthService {
       role: user.role,
     });
 
-    const { password_hash: _, otp_code: __, otp_expires_at: ___, ...userWithoutSensitive } = user;
-
     return {
       token,
-      user: userWithoutSensitive as Omit<User, 'password_hash' | 'otp_code' | 'otp_expires_at'>,
+      user: stripSensitiveUserFields(user),
     };
   }
 

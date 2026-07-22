@@ -37,7 +37,21 @@ export interface LoginDTO {
   password: string;
 }
 
+export interface OtpRequestResult {
+  phone_number: string;
+  role: UserRole;
+  expires_at: string;
+  delivery_status: 'sent' | 'mocked';
+  otp_code?: string;
+}
+
+export interface OtpVerificationResult {
+  verified: true;
+  phone_number: string;
+  registration_required: true;
+}
+
 export interface AuthResponse {
   token: string;
-  user: Omit<User, 'password_hash'>;
+  user: Omit<User, 'password_hash' | 'otp_code' | 'otp_expires_at'>;
 }

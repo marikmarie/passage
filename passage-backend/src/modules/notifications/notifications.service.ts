@@ -9,10 +9,11 @@ export class NotificationsService {
     const { page: p, limit: l } = getPaginationOptions(page, limit);
     const offset = calculateOffset(p, l);
 
-    const { notifications, total } = await notificationsModel.findByUserId(userId, l, offset);
+    const { notifications, total, unread } = await notificationsModel.findByUserId(userId, l, offset);
 
     return {
       notifications,
+      unread,
       pagination: {
         total,
         page: p,
@@ -20,6 +21,28 @@ export class NotificationsService {
         pages: Math.ceil(total / l),
       },
     };
+  }
+
+  async createInApp(userId: number | null, title: string, body: string, type = 'trip') {
+    if (!userId) return null;
+    return notificationsModel.create({ user_id: userId, title, body, channel: 'in_app', type });
+  }
+
+  async createInAppSafely(userId: number | null, title: string, body: string, type = 'trip') {
+    try {
+      return await this.createInApp(userId, title, body, type);
+    } catch (error) {
+      console.error('Failed to create in-app notification:', error);
+      return null;
+    }
+  }
+
+  markRead(id: number, userId: number) {
+    return notificationsModel.markRead(id, userId);
+  }
+
+  markAllRead(userId: number) {
+    return notificationsModel.markAllRead(userId);
   }
 
   async sendNotification(data: any) {
@@ -53,6 +76,7 @@ export class NotificationsService {
       title: data.title,
       body: data.body,
       channel: data.channel,
+      type: data.type || 'general',
     });
   }
 }

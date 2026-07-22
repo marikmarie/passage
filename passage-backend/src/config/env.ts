@@ -11,4 +11,7 @@ export const env = {
   DB_PASSWORD: process.env.DB_PASSWORD || '',
   DB_NAME: process.env.DB_NAME || 'passage_db',
   JWT_SECRET: process.env.JWT_SECRET || 'super_secret_key_123',
+  TOKEN_SECRET: process.env.TOKEN_SECRET || process.env.JWT_SECRET || 'super_secret_key_123',
+  ORS_API_KEY: process.env.ORS_API_KEY || '',
+  ORS_BASE_URL: process.env.ORS_BASE_URL || 'https://api.openrouteservice.org',
 };

@@ -50,15 +50,15 @@ export class AuthController {
 
   async requestOtp(req: Request, res: Response): Promise<void> {
     try {
-      const { phone_number } = req.body;
+      const { phone_number, role = 'parent' } = req.body;
 
       if (!phone_number) {
         sendError(res, 'Phone number is required', 400);
         return;
       }
 
-      await authService.requestOtp(phone_number);
-      sendSuccess(res, 'OTP sent successfully', { phone_number });
+      const result = await authService.requestOtp(phone_number, role);
+      sendSuccess(res, 'OTP sent successfully', result);
     } catch (error: any) {
       sendError(res, error.message, 400);
     }
@@ -100,6 +100,9 @@ export class AuthController {
     }
   }
 
+  async logout(req: AuthenticatedRequest, res: Response): Promise<void> {
+    sendSuccess(res, 'Logout successful', { logged_out: true });
+  }
 }
 
 export const authController = new AuthController();

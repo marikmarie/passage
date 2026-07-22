@@ -5,6 +5,9 @@ import { authenticateToken } from '../../middleware/auth.middleware';
 const router = Router();
 
 // Riders routes
+router.get('/me', authenticateToken, (req, res) => ridersController.getMe(req, res));
+router.put('/me', authenticateToken, (req, res) => ridersController.upsertMe(req, res));
+router.post('/me', authenticateToken, (req, res) => ridersController.upsertMe(req, res));
 router.get('/by-parent', authenticateToken, (req, res) => ridersController.getByParentId(req, res));
 router.get('/:id', authenticateToken, (req, res) => ridersController.getById(req, res));
 router.post('/', authenticateToken, (req, res) => ridersController.create(req, res));

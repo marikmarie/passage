@@ -1,13 +1,24 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { trackingService } from './tracking.service';
+import { devicesService } from '../devices/devices.service';
 import { sendSuccess, sendError } from '../../utils/response.util';
 import { AuthenticatedRequest } from '../../middleware/auth.middleware';
 
 export class TrackingController {
-  async getLatestLocation(req: Request, res: Response): Promise<void> {
+  private async canAccessDevice(req: AuthenticatedRequest, deviceId: number): Promise<boolean> {
+    return devicesService.canAccessDevice(req.user, deviceId);
+  }
+
+  async getLatestLocation(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      const deviceId = Array.isArray(req.params.deviceId) ? req.params.deviceId[0] : (req.params.deviceId || '');
-      const location = await trackingService.getLatestLocation(parseInt(deviceId));
+      const deviceId = parseInt(Array.isArray(req.params.deviceId) ? req.params.deviceId[0] : (req.params.deviceId || ''));
+
+      if (!(await this.canAccessDevice(req, deviceId))) {
+        sendError(res, 'You do not have permission to access this device location', 403);
+        return;
+      }
+
+      const location = await trackingService.getLatestLocation(deviceId);
 
       if (!location) {
         sendError(res, 'No location data available', 404);
@@ -20,13 +31,18 @@ export class TrackingController {
     }
   }
 
-  async getLocationHistory(req: Request, res: Response): Promise<void> {
+  async getLocationHistory(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      const deviceId = Array.isArray(req.params.deviceId) ? req.params.deviceId[0] : (req.params.deviceId || '');
+      const deviceId = parseInt(Array.isArray(req.params.deviceId) ? req.params.deviceId[0] : (req.params.deviceId || ''));
       const page = parseInt((req.query.page as string) || '1') || 1;
       const limit = parseInt((req.query.limit as string) || '10') || 10;
 
-      const result = await trackingService.getLocationHistory(parseInt(deviceId), page, limit);
+      if (!(await this.canAccessDevice(req, deviceId))) {
+        sendError(res, 'You do not have permission to access this device history', 403);
+        return;
+      }
+
+      const result = await trackingService.getLocationHistory(deviceId, page, limit);
       sendSuccess(res, 'Location history retrieved successfully', result);
     } catch (error: any) {
       sendError(res, error.message, 500);
@@ -56,10 +72,9 @@ export class TrackingController {
     }
   }
 
-  async getRoutePlayback(req: Request, res: Response): Promise<void> {
+  async getRoutePlayback(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      // const { deviceId } = req.params;
-      const deviceId = Array.isArray(req.params.deviceId) ? req.params.deviceId[0] : (req.params.deviceId || '');
+      const deviceId = parseInt(Array.isArray(req.params.deviceId) ? req.params.deviceId[0] : (req.params.deviceId || ''));
       const { startDate, endDate } = req.query;
 
       if (!startDate || !endDate) {
@@ -67,9 +82,14 @@ export class TrackingController {
         return;
       }
 
+      if (!(await this.canAccessDevice(req, deviceId))) {
+        sendError(res, 'You do not have permission to access this route playback', 403);
+        return;
+      }
+
       const route = await trackingService.getRoutePlayback(
-        parseInt(deviceId),
-       new Date(String(startDate)),
+        deviceId,
+        new Date(String(startDate)),
         new Date(String(endDate))
       );
 

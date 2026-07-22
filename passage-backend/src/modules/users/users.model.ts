@@ -65,7 +65,7 @@ export class UsersModel {
   async delete(id: number): Promise<boolean> {
     const [result] = await pool.query<ResultSetHeader>(
       'UPDATE users SET status = ?, updated_at = NOW() WHERE id = ?',
-      ['deleted', id]
+      ['inactive', id]
     );
     return result.affectedRows > 0;
   }

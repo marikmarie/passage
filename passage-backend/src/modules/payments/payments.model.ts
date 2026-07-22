@@ -7,10 +7,14 @@ export interface Payment {
   amount: number;
   currency: string;
   provider: string;
+  provider_ref: string | null;
+  phone: string;
+  description: string | null;
   status: 'pending' | 'completed' | 'failed' | 'refunded';
   reference: string;
   created_at: Date;
   updated_at: Date;
+  completed_at: Date | null;
 }
 
 export class PaymentsModel {
@@ -39,10 +43,20 @@ export class PaymentsModel {
     };
   }
 
+  async findOwnedById(id: number, userId: number): Promise<Payment | null> {
+    const [rows] = await pool.query<RowDataPacket[]>(
+      'SELECT * FROM payments WHERE id = ? AND user_id = ?',
+      [id, userId]
+    );
+    return rows.length ? (rows[0] as Payment) : null;
+  }
+
   async create(data: any): Promise<Payment> {
     const [result] = await pool.query<ResultSetHeader>(
-      'INSERT INTO payments (user_id, amount, currency, provider, status, reference) VALUES (?, ?, ?, ?, ?, ?)',
-      [data.user_id, data.amount, data.currency, data.provider, 'pending', data.reference]
+      `INSERT INTO payments
+       (user_id, amount, currency, provider, status, reference, phone, description)
+       VALUES (?, ?, ?, ?, 'pending', ?, ?, ?)`,
+      [data.user_id, data.amount, data.currency, data.provider, data.reference, data.phone, data.description || null]
     );
 
     const payment = await this.findById(result.insertId);

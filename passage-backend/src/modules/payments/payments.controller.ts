@@ -25,35 +25,38 @@ export class PaymentsController {
   async initiatePayment(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const userId = req.user?.id;
-      const { amount, currency, email, description, callback_url } = req.body;
+      const { amount, phone, description } = req.body;
 
-      if (!userId || !amount || !email) {
+      if (!userId || !amount || !phone) {
         sendError(res, 'Missing required fields', 400);
         return;
       }
 
       const result = await paymentsService.initiatePayment(userId, {
         amount,
-        currency,
-        email,
+        phone,
         description,
-        callback_url,
       });
 
       sendSuccess(res, 'Payment initiated successfully', result, 201);
     } catch (error: any) {
-      sendError(res, error.message, 500);
+      sendError(res, error.message, error.statusCode || 500);
     }
   }
 
   async verifyPayment(req: Request, res: Response): Promise<void> {
     try {
-      const transactionId = Array.isArray(req.params.transactionId) ? req.params.transactionId[0] : (req.params.transactionId || '');
+      const userId = (req as AuthenticatedRequest).user?.id;
+      const paymentId = Number(req.params.paymentId);
+      if (!userId || !Number.isInteger(paymentId)) {
+        sendError(res, 'Invalid payment.', 400);
+        return;
+      }
 
-      const result = await paymentsService.verifyPayment(transactionId);
+      const result = await paymentsService.verifyPayment(paymentId, userId);
       sendSuccess(res, 'Payment verified successfully', result);
     } catch (error: any) {
-      sendError(res, error.message, 500);
+      sendError(res, error.message, error.statusCode || 500);
     }
   }
 }

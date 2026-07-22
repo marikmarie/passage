@@ -2,9 +2,17 @@ import { devicesModel } from './devices.model';
 import { Device, CreateDeviceDTO, UpdateDeviceDTO } from '../../types/device.types';
 import { getPaginationOptions, calculateOffset } from '../../utils/pagination.util';
 import { pool } from '../../config/database';
-
+import { env } from '../../config/env';
 
 const crypto = require('crypto');
+
+const PRIVILEGED_ROLES = ['admin', 'support'];
+
+export interface AuthUserRef {
+  id: number;
+  role: string;
+  email?: string;
+}
 
 export interface WatchStateData {
   state: string;
@@ -38,13 +46,42 @@ export class DevicesService {
     return devicesModel.findById(id);
   }
 
+  async canAccessDevice(user: AuthUserRef | undefined, deviceId: number): Promise<boolean> {
+    if (!user) return false;
+    if (PRIVILEGED_ROLES.includes(user.role)) return true;
+
+    if (user.role === 'parent') {
+      const [rows] = await pool.query<any[]>(
+        'SELECT id FROM kids WHERE device_id = ? AND parent_user_id = ? LIMIT 1',
+        [deviceId, user.id]
+      );
+      return rows.length > 0;
+    }
+
+    if (user.role === 'rider') {
+      const [rows] = await pool.query<any[]>(
+        `SELECT t.id
+         FROM trips t
+         JOIN riders r ON r.id = t.rider_id
+         WHERE t.device_id = ?
+           AND r.user_id = ?
+           AND t.status IN ('awaiting_pickup', 'active')
+         LIMIT 1`,
+        [deviceId, user.id]
+      );
+      return rows.length > 0;
+    }
+
+    return false;
+  }
+
   async determineWatchState(deviceId: number): Promise<WatchStateData> {
     const [rows] = await pool.query<any[]>(
       `SELECT t.id AS tripId, d.current_state
        FROM trips t
        JOIN devices d ON d.id = t.device_id
-       WHERE d.id = ? AND t.status = 'active'
-       ORDER BY t.start_time DESC
+       WHERE d.id = ? AND t.status IN ('awaiting_pickup', 'active')
+       ORDER BY COALESCE(t.start_time, t.created_at) DESC
        LIMIT 1`,
       [deviceId]
     );
@@ -80,6 +117,32 @@ export class DevicesService {
   }
 
   async saveLocation(data: SaveLocationDTO): Promise<void> {
+    if (
+      !Number.isFinite(Number(data.lat)) ||
+      !Number.isFinite(Number(data.lng)) ||
+      Number(data.lat) < -90 ||
+      Number(data.lat) > 90 ||
+      Number(data.lng) < -180 ||
+      Number(data.lng) > 180
+    ) {
+      throw new Error('Location must include valid lat and lng values');
+    }
+
+    if (data.tripId) {
+      const [tripRows] = await pool.query<any[]>(
+        `SELECT id
+         FROM trips
+         WHERE id = ?
+           AND device_id = ?
+           AND status IN ('awaiting_pickup', 'active')
+         LIMIT 1`,
+        [data.tripId, data.deviceId]
+      );
+      if (!tripRows.length) {
+        throw new Error('Trip does not belong to this device or is not active');
+      }
+    }
+
     const timestamp = data.timestamp ? new Date(data.timestamp) : new Date();
 
     await pool.query(
@@ -128,26 +191,47 @@ export class DevicesService {
     if (tripId) {
       await pool.query('UPDATE trips SET updated_at = NOW() WHERE id = ?', [tripId]);
     }
-    }
+  }
 
-    async generateVerificationToken(deviceId: number, tripId: number): Promise<{ token: string; expiresAt: string }> {
-    const tokenSecret = process.env.TOKEN_SECRET;
+  async generateVerificationToken(deviceId: number, tripId: number): Promise<{ token: string; expiresAt: string }> {
+    const tokenSecret = env.TOKEN_SECRET;
 
     if (!tokenSecret) {
       throw new Error('TOKEN_SECRET is not configured');
     }
 
+    const [tripRows] = await pool.query<any[]>(
+      `SELECT id
+       FROM trips
+       WHERE id = ?
+         AND device_id = ?
+         AND status IN ('awaiting_pickup', 'active')
+       LIMIT 1`,
+      [tripId, deviceId]
+    );
+    if (!tripRows.length) {
+      throw new Error('Trip does not belong to this device or is not active');
+    }
+
     const issuedAt = Date.now();
     const rawData = `${deviceId}:${tripId}:${issuedAt}:${crypto.randomBytes(8).toString('hex')}`;
     const signature = crypto.createHmac('sha256', tokenSecret).update(rawData).digest('hex');
+    const token = `${rawData}.${signature}`;
+    const expiresAt = new Date(issuedAt + 2 * 60 * 1000);
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+    await pool.query(
+      `INSERT INTO watch_verification_tokens
+         (trip_id, device_id, token_hash, expires_at)
+       VALUES (?, ?, ?, ?)`,
+      [tripId, deviceId, tokenHash, expiresAt]
+    );
 
     return {
-      token: `${rawData}.${signature}`,
-      expiresAt: new Date(issuedAt + 2 * 60 * 1000).toISOString(),
+      token,
+      expiresAt: expiresAt.toISOString(),
     };
-    }
-
-
+  }
 
   async getAllDevices(page?: string | number, limit?: string | number): Promise<any> {
     const { page: p, limit: l } = getPaginationOptions(page, limit);
@@ -156,13 +240,8 @@ export class DevicesService {
     const { devices, total } = await devicesModel.findAll(l, offset);
 
     return {
-      devices,
-      pagination: {
-        total,
-        page: p,
-        limit: l,
-        pages: Math.ceil(total / l),
-      },
+      data: devices,
+      total,
     };
   }
 

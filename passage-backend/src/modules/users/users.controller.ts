@@ -2,33 +2,47 @@ import { Request, Response } from 'express';
 import { usersService } from './users.service';
 import { BaseController } from '../base.controller';
 import { AuthenticatedRequest } from '../../middleware/auth.middleware';
-import { NotFoundError } from '../../utils/errors.util';
+import { ForbiddenError, NotFoundError } from '../../utils/errors.util';
+
+const PRIVILEGED_ROLES = ['admin', 'support'];
 
 class UsersController extends BaseController {
+  private canAccessUser(req: AuthenticatedRequest, id: number): boolean {
+    const currentUser = req.user;
+    if (!currentUser) return false;
+    return currentUser.id === id || PRIVILEGED_ROLES.includes(currentUser.role);
+  }
+
+  private canUseAdminFields(req: AuthenticatedRequest): boolean {
+    return Boolean(req.user && PRIVILEGED_ROLES.includes(req.user.role));
+  }
+
   async getAll(req: Request, res: Response): Promise<void> {
     try {
       const { page, limit } = this.parsePaginationParams(req.query);
       const role = req.query.role ? String(req.query.role) : undefined;
 
       const result = await usersService.getAllUsers(page, limit, role);
-      
       const pagination = this.calculatePaginationMeta(result.total, page, limit);
+
       this.sendPaginatedSuccess(res, 'Users retrieved successfully', result.data, pagination);
     } catch (error) {
       this.handleApiError(res, error);
     }
   }
 
-  async getById(req: Request, res: Response): Promise<void> {
+  async getById(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const id = this.parseId(req.params.id);
-      const user = await usersService.getUserById(id);
 
+      if (!this.canAccessUser(req, id)) {
+        throw new ForbiddenError('You can only access your own profile.');
+      }
+
+      const user = await usersService.getUserById(id);
       const validatedUser = this.ensureResourceExists(user, 'User');
 
-      // Remove password hash from response
-      const { password_hash: _, ...userWithoutPassword } = validatedUser;
-      this.sendSuccess(res, 'User retrieved successfully', userWithoutPassword);
+      this.sendSuccess(res, 'User retrieved successfully', validatedUser);
     } catch (error) {
       this.handleApiError(res, error);
     }
@@ -37,15 +51,15 @@ class UsersController extends BaseController {
   async update(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const id = this.parseId(req.params.id);
-      const updates = req.body;
 
-      const user = await usersService.updateUser(id, updates);
+      if (!this.canAccessUser(req, id)) {
+        throw new ForbiddenError('You can only update your own profile.');
+      }
 
+      const user = await usersService.updateUser(id, req.body, this.canUseAdminFields(req));
       const validatedUser = this.ensureResourceExists(user, 'User');
 
-      // Remove password hash from response
-      const { password_hash: _, ...userWithoutPassword } = validatedUser;
-      this.sendSuccess(res, 'User updated successfully', userWithoutPassword);
+      this.sendSuccess(res, 'User updated successfully', validatedUser);
     } catch (error) {
       this.handleApiError(res, error);
     }

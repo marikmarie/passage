@@ -2,9 +2,15 @@ import { Request, Response } from "express";
 import { devicesService } from "./devices.service";
 import { BaseController } from "../base.controller";
 import { AuthenticatedRequest } from "../../middleware/auth.middleware";
-import { ValidationError, NotFoundError } from "../../utils/errors.util";
+import { ForbiddenError, NotFoundError } from "../../utils/errors.util";
 
 class DevicesController extends BaseController {
+  private async assertCanAccessDevice(req: AuthenticatedRequest, deviceId: number): Promise<void> {
+    if (!(await devicesService.canAccessDevice(req.user, deviceId))) {
+      throw new ForbiddenError("You do not have permission to access this device.");
+    }
+  }
+
   async getWatchState(req: Request, res: Response): Promise<void> {
     try {
       const deviceId = this.parseId(req.params.deviceId, "device ID");
@@ -20,7 +26,6 @@ class DevicesController extends BaseController {
       this.handleApiError(res, error);
     }
   }
-
 
   async sendLocation(req: Request, res: Response): Promise<void> {
     try {
@@ -52,7 +57,6 @@ class DevicesController extends BaseController {
     }
   }
 
-
   async sendEvent(req: Request, res: Response): Promise<void> {
     try {
       const { deviceId, tripId, eventType, battery, timestamp } = req.body;
@@ -62,7 +66,6 @@ class DevicesController extends BaseController {
       this.handleApiError(res, error);
     }
   }
-
 
   async requestVerificationToken(req: Request, res: Response): Promise<void> {
     try {
@@ -77,7 +80,6 @@ class DevicesController extends BaseController {
       this.handleApiError(res, error);
     }
   }
-
 
   async getAll(req: Request, res: Response): Promise<void> {
     try {
@@ -100,12 +102,14 @@ class DevicesController extends BaseController {
     }
   }
 
-  async getById(req: Request, res: Response): Promise<void> {
+  async getById(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const id = this.parseId(req.params.id);
-      const device = await devicesService.getDeviceById(id);
+      await this.assertCanAccessDevice(req, id);
 
+      const device = await devicesService.getDeviceById(id);
       this.ensureResourceExists(device, "Device");
+
       this.sendSuccess(res, "Device retrieved successfully", device);
     } catch (error) {
       this.handleApiError(res, error);

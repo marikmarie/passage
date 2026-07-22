@@ -9,7 +9,10 @@
     "start": "node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "css:build": "npx tailwindcss -i ./admin-dashboard/assets/css/tailwind.css -o ./admin-dashboard/assets/css/output.css",
-    "css:watch": "npx tailwindcss -i ./admin-dashboard/assets/css/tailwind.css -o ./admin-dashboard/assets/css/output.css --watch"
+    "css:watch": "npx tailwindcss -i ./admin-dashboard/assets/css/tailwind.css -o ./admin-dashboard/assets/css/output.css --watch",
+    "db:migrate": "node scripts/db-migrate.js",
+    "db:seed": "node scripts/db-seed.js",
+    "db:setup": "npm run db:migrate && npm run db:seed"
   },
   "keywords": [],
   "author": "",

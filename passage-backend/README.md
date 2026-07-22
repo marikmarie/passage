@@ -1,5 +1,7 @@
 # PASSAGE Backend & Admin Dashboard
 
+> Current implementation status, recent migrations, blockers, and handoff instructions are maintained in [PROJECT_STATUS_AND_HANDOFF.md](PROJECT_STATUS_AND_HANDOFF.md). The older endpoint lists below do not yet include every Phase 5-9 route.
+
 A comprehensive child safety platform with:
 - **Node.js/Express RESTful API** with MySQL database
 - **Real-time tracking** via Socket.IO

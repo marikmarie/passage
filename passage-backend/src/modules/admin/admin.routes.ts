@@ -14,5 +14,8 @@ router.put('/users/:userId/status', (req, res) => adminController.updateUserStat
 router.get('/devices', (req, res) => adminController.getAllDevices(req, res));
 router.get('/alerts', (req, res) => adminController.getAllAlerts(req, res));
 router.get('/payments', (req, res) => adminController.getAllPayments(req, res));
+router.get('/rider-reviews', (req, res) => adminController.getRiderReviews(req, res));
+router.get('/rider-reviews/:riderId', (req, res) => adminController.getRiderReviewById(req, res));
+router.put('/rider-reviews/:riderId/status', (req, res) => adminController.updateRiderReviewStatus(req, res));
 
 export default router;

@@ -10,6 +10,6 @@ router.post('/login', (req, res) => authController.login(req, res));
 router.post('/otp/request', (req, res) => authController.requestOtp(req, res));
 router.post('/otp/verify', (req, res) => authController.verifyOtp(req, res));
 router.get('/me', authenticateToken, (req, res) => authController.me(req, res));
+router.post('/logout', authenticateToken, (req, res) => authController.logout(req, res));
 
 export default router;
-

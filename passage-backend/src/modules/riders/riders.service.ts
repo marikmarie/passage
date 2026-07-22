@@ -1,9 +1,13 @@
-import { ridersModel, Rider } from './riders.model';
+import { ridersModel, Rider, RiderProfileInput } from './riders.model';
 import { getPaginationOptions, calculateOffset } from '../../utils/pagination.util';
 
 export class RidersService {
   async getRiderById(id: number): Promise<Rider | null> {
     return ridersModel.findById(id);
+  }
+
+  async getRiderByUserId(userId: number): Promise<Rider | null> {
+    return ridersModel.findByUserId(userId);
   }
 
   async getRidersByParentId(parentUserId: number, page?: string | number, limit?: string | number): Promise<any> {
@@ -14,6 +18,7 @@ export class RidersService {
 
     return {
       riders,
+      total,
       pagination: {
         total,
         page: p,
@@ -23,11 +28,21 @@ export class RidersService {
     };
   }
 
-  async createRider(data: any): Promise<Rider> {
+  async createRider(data: RiderProfileInput): Promise<Rider> {
     return ridersModel.create(data);
   }
 
-  async updateRider(id: number, updates: any): Promise<Rider | null> {
+  async upsertCurrentRiderProfile(userId: number, data: RiderProfileInput): Promise<Rider> {
+    const isCompleteSubmission = Boolean(data.training_accepted && data.safeguarding_accepted);
+
+    return ridersModel.upsertByUserId(userId, {
+      ...data,
+      approval_status: isCompleteSubmission ? 'pending_review' : data.approval_status ?? 'draft',
+      submitted_at: isCompleteSubmission ? new Date() : data.submitted_at,
+    });
+  }
+
+  async updateRider(id: number, updates: RiderProfileInput): Promise<Rider | null> {
     return ridersModel.update(id, updates);
   }
 

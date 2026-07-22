@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express, { Application, Router } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -18,10 +18,39 @@ import paymentsRoutes from '../modules/payments/payments.routes';
 import subscriptionsRoutes from '../modules/subscriptions/subscriptions.routes';
 import reportsRoutes from '../modules/reports/reports.routes';
 import adminRoutes from '../modules/admin/admin.routes';
+import routePlanningRoutes from '../modules/route-planning/route-planning.routes';
+import rideRequestsRoutes from '../modules/ride-requests/ride-requests.routes';
+import watchRoutes from '../modules/watch/watch.routes';
+import walletRoutes from '../modules/wallet/wallet.routes';
 
 // Import middleware
 import { errorHandler } from '../middleware/errorHandler.middleware';
 import { rateLimiter } from '../middleware/rateLimiter.middleware';
+
+const buildApiRouter = (): Router => {
+  const router = Router();
+
+  router.use('/auth', authRoutes);
+  router.use('/users', usersRoutes);
+  router.use('/riders', ridersRoutes);
+  router.use('/kids', kidsRoutes);
+  router.use('/devices', devicesRoutes);
+  router.use('/tracking', trackingRoutes);
+  router.use('/trips', tripsRoutes);
+  router.use('/geofences', geofencesRoutes);
+  router.use('/alerts', alertsRoutes);
+  router.use('/notifications', notificationsRoutes);
+  router.use('/payments', paymentsRoutes);
+  router.use('/wallet', walletRoutes);
+  router.use('/subscriptions', subscriptionsRoutes);
+  router.use('/reports', reportsRoutes);
+  router.use('/routes', routePlanningRoutes);
+  router.use('/ride-requests', rideRequestsRoutes);
+  router.use('/watch', watchRoutes);
+  router.use('/admin', adminRoutes);
+
+  return router;
+};
 
 export const createApp = (): Application => {
   const app: Application = express();
@@ -37,26 +66,20 @@ export const createApp = (): Application => {
   // Serve the admin dashboard as static files
   app.use('/admin', express.static('admin-dashboard'));
 
-  // Basic health check route
-  app.get('/api/health', (req, res) => {
-    res.status(200).json({ status: 'ok', message: 'PASSAGE API is running' });
+  // Basic health check routes
+  app.get(['/health', '/api/health', '/api/v1/health'], (req, res) => {
+    res.status(200).json({
+      success: true,
+      status: 'healthy',
+      platform: 'PASSAGE',
+      message: 'PASSAGE API is running',
+      timestamp: new Date().toISOString(),
+    });
   });
 
-  // API Routes (v1)
-  app.use('/api/v1/auth', authRoutes);
-  app.use('/api/v1/users', usersRoutes);
-  app.use('/api/v1/riders', ridersRoutes);
-  app.use('/api/v1/kids', kidsRoutes);
-  app.use('/api/v1/devices', devicesRoutes);
-  app.use('/api/v1/tracking', trackingRoutes);
-  app.use('/api/v1/trips', tripsRoutes);
-  app.use('/api/v1/geofences', geofencesRoutes);
-  app.use('/api/v1/alerts', alertsRoutes);
-  app.use('/api/v1/notifications', notificationsRoutes);
-  app.use('/api/v1/payments', paymentsRoutes);
-  app.use('/api/v1/subscriptions', subscriptionsRoutes);
-  app.use('/api/v1/reports', reportsRoutes);
-  app.use('/api/v1/admin', adminRoutes);
+  // API Routes. /api is the frontend contract; /api/v1 remains for backward compatibility.
+  app.use('/api', buildApiRouter());
+  app.use('/api/v1', buildApiRouter());
 
   // Global Error handling middleware
   app.use(errorHandler);

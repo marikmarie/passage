@@ -53,7 +53,7 @@ export interface VerifyPhoneNumberResponse {
 export class CollectoService {
   private apiKey: string = process.env.COLLECTO_API_KEY || '';
   private username: string = process.env.COLLECTO_USERNAME || '';
-  private baseUrl: string = 'https://collecto.cissytech.com/api';
+  private baseUrl: string = process.env.COLLECTO_BASE_URL || 'https://collecto.cissytech.com/api';
 
   private getHeaders() {
     return {
@@ -67,8 +67,9 @@ export class CollectoService {
    */
   async requestToPay(request: RequestToPayRequest): Promise<RequestToPayResponse> {
     try {
+      this.assertConfigured();
       const url = `${this.baseUrl}/${this.username}/requestToPay`;
-      const response = await fetch(url, {
+      const response = await this.fetchWithTimeout(url, {
         method: 'POST',
         headers: this.getHeaders(),
         body: JSON.stringify(request),
@@ -97,8 +98,9 @@ export class CollectoService {
    */
   async requestToPayStatus(request: RequestToPayStatusRequest): Promise<PaymentStatusResponse> {
     try {
+      this.assertConfigured();
       const url = `${this.baseUrl}/${this.username}/requestToPayStatus`;
-      const response = await fetch(url, {
+      const response = await this.fetchWithTimeout(url, {
         method: 'POST',
         headers: this.getHeaders(),
         body: JSON.stringify(request),
@@ -125,8 +127,9 @@ export class CollectoService {
    */
   async verifyPhoneNumber(request: VerifyPhoneNumberRequest): Promise<VerifyPhoneNumberResponse> {
     try {
+      this.assertConfigured();
       const url = `${this.baseUrl}/${this.username}/verifyPhoneNumber`;
-      const response = await fetch(url, {
+      const response = await this.fetchWithTimeout(url, {
         method: 'POST',
         headers: this.getHeaders(),
         body: JSON.stringify(request),
@@ -155,8 +158,9 @@ export class CollectoService {
    */
   async sendSingleSMS(request: SendSMSRequest): Promise<SendSMSResponse> {
     try {
+      this.assertConfigured();
       const url = `${this.baseUrl}/${this.username}/sendSingleSMS`;
-      const response = await fetch(url, {
+      const response = await this.fetchWithTimeout(url, {
         method: 'POST',
         headers: this.getHeaders(),
         body: JSON.stringify(request),
@@ -179,7 +183,23 @@ export class CollectoService {
     }
   }
 
- 
+  private assertConfigured(): void {
+    if (!this.apiKey || !this.username) {
+      const error = new Error('Collecto gateway is not configured.');
+      (error as any).statusCode = 503;
+      throw error;
+    }
+  }
+
+  private async fetchWithTimeout(url: string, init: RequestInit): Promise<Response> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    try {
+      return await fetch(url, { ...init, signal: controller.signal });
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
 }
 
 export const collectoService = new CollectoService();

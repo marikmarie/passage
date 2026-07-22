@@ -123,5 +123,8 @@ const endpoints = {
     devices: '/admin/devices',
     alerts: '/admin/alerts',
     payments: '/admin/payments',
+    riderReviews: '/admin/rider-reviews',
+    riderReview: (id) => /admin/rider-reviews/,
+    riderReviewStatus: (id) => /admin/rider-reviews//status,
   },
 };
