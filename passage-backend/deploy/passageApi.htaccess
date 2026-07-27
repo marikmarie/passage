@@ -1,0 +1,44 @@
+# Upload to the server as: /passageApi/.htaccess
+#
+# Routes every request under /passageApi/ into node.php, and stops Apache from
+# serving the Node build as readable static text (which is what it does today).
+
+Options -Indexes -MultiViews
+DirectoryIndex node.php
+
+# Apache 2.4.13+ : let PHP see the Authorization header.
+<IfModule mod_cgi.c>
+    CGIPassAuth On
+</IfModule>
+<IfModule mod_fcgid.c>
+    CGIPassAuth On
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /passageApi/
+
+    # Older Apache builds drop Authorization; republish it for PHP.
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # The bridge itself is served normally.
+    RewriteRule ^node\.php$ - [L]
+
+    # Everything else - including paths that happen to match a real file such
+    # as index.js - is handed to the bridge. Do NOT add a !-f condition here;
+    # that is precisely what would expose the source again.
+    RewriteRule ^ node.php [QSA,L]
+</IfModule>
+
+# Defence in depth: if mod_rewrite is ever unavailable, these must still never
+# be downloadable.
+<FilesMatch "\.(env|json|js|ts|map|lock|sql|md)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

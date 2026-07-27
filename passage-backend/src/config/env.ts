@@ -1,8 +1,10 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Load .env variables
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// Load .env variables. `quiet` suppresses dotenv v17's startup banner, which
+// would otherwise be written to stdout and corrupt the JSON response envelope
+// the PHP bridge reads (see src/cli-guard.ts and deploy/node.php).
+dotenv.config({ path: path.resolve(__dirname, '../../.env'), quiet: true });
 
 export const env = {
   PORT: process.env.PORT || 3000,
