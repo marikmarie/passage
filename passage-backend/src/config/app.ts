@@ -60,7 +60,9 @@ export const createApp = (): Application => {
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  app.use(morgan('dev'));
+  if (process.env.NODE_ENV !== 'test' && process.env.CLI_MODE !== '1') {
+    app.use(morgan('dev'));
+  }
   app.use(rateLimiter(15 * 60 * 1000, 100));
 
   // Serve the admin dashboard as static files
