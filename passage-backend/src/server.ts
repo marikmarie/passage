@@ -8,7 +8,7 @@ import { initializeJobs } from './jobs/index';
 const startServer = async () => {
   try {
     // Test Database Connection
-    await testConnection();
+    //await testConnection();
 
     const app = createApp();
     const server = http.createServer(app);
@@ -33,13 +33,13 @@ const startServer = async () => {
     });
 
     // Handle graceful shutdown
-    process.on('SIGTERM', () => {
-      console.log('🛑 SIGTERM received: shutting down gracefully');
-      server.close(() => {
-        console.log('✅ Server closed');
-        process.exit(0);
-      });
-    });
+    // process.on('SIGTERM', () => {
+    //   console.log('🛑 SIGTERM received: shutting down gracefully');
+    //   server.close(() => {
+    //     console.log('✅ Server closed');
+    //     process.exit(0);
+    //   });
+    // });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
     process.exit(1);

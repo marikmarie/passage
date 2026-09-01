@@ -79,7 +79,6 @@ export const createApp = (): Application => {
     });
   });
 
-  // API Routes. /api is the frontend contract; /api/v1 remains for backward compatibility.
   app.use('/api', buildApiRouter());
   app.use('/api/v1', buildApiRouter());
 
