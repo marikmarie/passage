@@ -1,20 +1,7 @@
 <!-- Devices Management Page -->
 <style>
-  :root {
-    --green-50: #E1F5EE;
-    --green-100: #9FE1CB;
-    --green-500: #1D9E75;
-    --green-700: #0F6E56;
-    --gray-50: #F7F8F9;
-    --gray-100: #EFF0F2;
-    --gray-200: #E0E2E6;
-    --gray-400: #9EA3AF;
-    --gray-600: #5C6270;
-    --gray-900: #0F1117;
-  }
-
-  .card {
-    background: #fff;
+.card {
+    background: var(--passage-white);
     border: 1px solid var(--gray-100);
     border-radius: 12px;
     overflow: hidden;
@@ -93,13 +80,13 @@
   }
 
   .badge-active {
-    background: #DCFCE7;
-    color: #166534;
+    background: var(--passage-success-bg);
+    color: var(--passage-success-text);
   }
 
   .badge-inactive {
-    background: #F3F4F6;
-    color: #4B5563;
+    background: var(--passage-neutral-bg);
+    color: var(--passage-neutral-text);
   }
 
   .action-btn {

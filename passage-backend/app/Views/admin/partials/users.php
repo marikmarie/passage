@@ -1,20 +1,7 @@
 <!-- Users Management Page -->
 <style>
-  :root {
-    --green-50: #E1F5EE;
-    --green-100: #9FE1CB;
-    --green-500: #1D9E75;
-    --green-700: #0F6E56;
-    --gray-50: #F7F8F9;
-    --gray-100: #EFF0F2;
-    --gray-200: #E0E2E6;
-    --gray-400: #9EA3AF;
-    --gray-600: #5C6270;
-    --gray-900: #0F1117;
-  }
-
-  .card {
-    background: #fff;
+.card {
+    background: var(--passage-white);
     border: 1px solid var(--gray-100);
     border-radius: 12px;
     overflow: hidden;
@@ -93,28 +80,28 @@
   }
 
   .badge-parent {
-    background: #DBEAFE;
-    color: #185FA5;
+    background: var(--passage-info-bg);
+    color: var(--passage-info-strong);
   }
 
   .badge-rider {
-    background: #F3E8FF;
-    color: #7E22CE;
+    background: var(--passage-purple-bg);
+    color: var(--passage-purple-text);
   }
 
   .badge-admin {
-    background: #FED7AA;
-    color: #9A3412;
+    background: var(--passage-orange-bg);
+    color: var(--passage-orange-text);
   }
 
   .badge-active {
-    background: #DCFCE7;
-    color: #166534;
+    background: var(--passage-success-bg);
+    color: var(--passage-success-text);
   }
 
   .badge-inactive {
-    background: #F3F4F6;
-    color: #4B5563;
+    background: var(--passage-neutral-bg);
+    color: var(--passage-neutral-text);
   }
 
   .action-btn {

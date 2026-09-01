@@ -14,7 +14,7 @@
 <div class="stats-grid">
   <div class="stat-card hero">
     <div class="stat-icon" style="background:rgba(255,255,255,.15);">
-      <i class="ti ti-motorbike" style="color:#fff;" aria-hidden="true"></i>
+      <i class="ti ti-motorbike" style="color:var(--passage-white);" aria-hidden="true"></i>
     </div>
     <p class="stat-label">Total Rides Today</p>
     <p class="stat-val">110</p>

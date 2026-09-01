@@ -1,0 +1,124 @@
+/* PASSAGE design tokens. Load this before page-specific styles. */
+:root {
+  color-scheme: light;
+
+  --passage-green-50: #E1F5EE;
+  --passage-green-100: #9FE1CB;
+  --passage-green-200: #5DCAA5;
+  --passage-green-500: #1D9E75;
+  --passage-green-700: #0F6E56;
+  --passage-green-900: #085041;
+
+  --passage-gray-50: #F7F8F9;
+  --passage-gray-100: #EFF0F2;
+  --passage-gray-200: #E0E2E6;
+  --passage-gray-400: #9EA3AF;
+  --passage-gray-600: #5C6270;
+  --passage-gray-700: #374151;
+  --passage-gray-900: #0F1117;
+
+  --passage-red-50: #FCEBEB;
+  --passage-red-100: #F7C1C1;
+  --passage-red-600: #A32D2D;
+  --passage-amber-50: #FAEEDA;
+  --passage-amber-600: #854F0B;
+  --passage-blue-50: #E6F1FB;
+  --passage-blue-600: #185FA5;
+
+  --passage-white: #FFFFFF;
+  --passage-success-bg: #DCFCE7;
+  --passage-success-text: #166534;
+  --passage-warning-bg: #FEF3C7;
+  --passage-warning-text: #92400E;
+  --passage-danger-bg: #FEE2E2;
+  --passage-danger-text: #991B1B;
+  --passage-info-bg: #DBEAFE;
+  --passage-info-text: #1D4ED8;
+  --passage-info-strong: #185FA5;
+  --passage-purple-bg: #F3E8FF;
+  --passage-purple-text: #7E22CE;
+  --passage-orange-bg: #FED7AA;
+  --passage-orange-text: #9A3412;
+  --passage-neutral-bg: #F3F4F6;
+  --passage-neutral-text: #4B5563;
+  --passage-indigo-bg: #E0E7FF;
+  --passage-indigo-text: #3730A3;
+  --passage-success-border: #BBF7D0;
+  --passage-warning-border: #F7D38A;
+  --passage-info-border: #BFDBFE;
+  --passage-alert-red: #E24B4A;
+  --passage-alert-amber: #EF9F27;
+  --passage-alert-blue: #378ADD;
+  --passage-warning-surface: #FFFBF0;
+  --passage-danger-surface: #FFF8F8;
+  --passage-surface-subtle: #FCFCFD;
+
+  --color-primary: var(--passage-green-500);
+  --color-primary-strong: var(--passage-green-700);
+  --color-primary-contrast: var(--passage-white);
+  --color-surface: var(--passage-white);
+  --color-page: var(--passage-gray-50);
+  --color-ink: var(--passage-gray-900);
+  --color-muted: var(--passage-gray-600);
+  --color-border: var(--passage-gray-200);
+  --color-focus-ring: var(--passage-green-100);
+
+  /* Compatibility aliases for the existing view styles. */
+  --green-50: var(--passage-green-50);
+  --green-100: var(--passage-green-100);
+  --green-200: var(--passage-green-200);
+  --green-500: var(--passage-green-500);
+  --green-700: var(--passage-green-700);
+  --green-900: var(--passage-green-900);
+  --gray-50: var(--passage-gray-50);
+  --gray-100: var(--passage-gray-100);
+  --gray-200: var(--passage-gray-200);
+  --gray-400: var(--passage-gray-400);
+  --gray-600: var(--passage-gray-600);
+  --gray-700: var(--passage-gray-700);
+  --gray-900: var(--passage-gray-900);
+  --red-50: var(--passage-red-50);
+  --red-100: var(--passage-red-100);
+  --red-600: var(--passage-red-600);
+  --amber-50: var(--passage-amber-50);
+  --amber-600: var(--passage-amber-600);
+  --blue-50: var(--passage-blue-50);
+  --blue-600: var(--passage-blue-600);
+  --green: var(--color-primary);
+  --ink: var(--color-ink);
+  --muted: var(--color-muted);
+  --surface: var(--color-page);
+}
+
+::selection {
+  background: var(--passage-green-100);
+  color: var(--passage-green-900);
+}
+
+.passage-brand-mark {
+  background: var(--color-primary);
+}
+
+.passage-muted-text {
+  color: var(--color-muted);
+}
+
+.passage-accent-hover:hover {
+  color: var(--color-primary);
+}
+
+.passage-control-accent {
+  accent-color: var(--color-primary);
+}
+
+.passage-link {
+  color: var(--color-primary);
+}
+
+.passage-link:hover {
+  color: var(--color-primary-strong);
+}
+
+.passage-primary-button {
+  background-image: linear-gradient(90deg, var(--color-primary), var(--color-primary-strong));
+}

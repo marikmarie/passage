@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Config\Config;
+use App\Core\Application;
 
 define('BASE_PATH', dirname(__DIR__));
 
@@ -18,3 +19,4 @@ spl_autoload_register(static function (string $class): void {
 });
 
 Config::load(BASE_PATH . '/.env');
+Application::boot();

@@ -4,7 +4,7 @@
     <div class="photo-overlay"></div>
 
     <div class="absolute top-8 left-8 flex items-center gap-2.5">
-      <div class="w-8 h-8 bg-[#00bf63] rounded-lg flex items-center justify-center shadow-md">
+      <div class="passage-brand-mark w-8 h-8 rounded-lg flex items-center justify-center shadow-md">
         <span class="text-white font-black text-base">P</span>
       </div>
       <span class="text-white font-extrabold text-xl tracking-wider">PASSAGE</span>
@@ -28,7 +28,7 @@
     <div class="w-full max-w-sm my-auto">
       <div class="text-center mb-8 fade-up fade-up-1">
         <h1 class="text-4xl font-black text-slate-900 tracking-tight">PASSAGE</h1>
-        <p class="text-sm text-[#5f6688] mt-2 font-bold uppercase tracking-wider text-[11px]">Secure Admin Portal</p>
+        <p class="passage-muted-text text-sm mt-2 font-bold uppercase tracking-wider text-[11px]">Secure Admin Portal</p>
       </div>
 
       <div id="errorAlert" class="hidden mb-5 p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm font-semibold text-center shadow-sm">
@@ -45,7 +45,7 @@
           <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Password</label>
           <div class="relative">
             <input type="password" id="password" class="input-field w-full px-4 py-3 pr-12 rounded-xl border border-slate-200 text-slate-900 placeholder-slate-400 text-sm bg-slate-50 focus:bg-white" placeholder="••••••••" required>
-            <button type="button" id="togglePw" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#00bf63] transition-colors duration-200" tabindex="-1">
+            <button type="button" id="togglePw" class="passage-accent-hover absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors duration-200" tabindex="-1">
               <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -56,14 +56,14 @@
 
         <div class="flex items-center justify-between fade-up fade-up-4 pt-1">
           <label class="flex items-center gap-2.5 cursor-pointer select-none">
-            <input type="checkbox" id="rememberMe" class="w-4 h-4 text-[#00bf63] border-slate-300 rounded focus:ring-[#00bf63] accent-[#00bf63]">
+            <input type="checkbox" id="rememberMe" class="passage-control-accent w-4 h-4 border-slate-300 rounded">
             <span class="text-sm text-slate-600 font-medium">Remember me</span>
           </label>
-          <a href="#" class="text-sm text-[#00bf63] font-bold hover:text-[#009950] transition-colors duration-200">Forgot password?</a>
+          <a href="#" class="passage-link text-sm font-bold transition-colors duration-200">Forgot password?</a>
         </div>
 
         <div class="fade-up fade-up-5 pt-2">
-          <button type="submit" class="btn-shine w-full bg-gradient-to-r from-[#00bf63] to-[#009950] hover:shadow-xl hover:shadow-emerald-500/20 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-500/10 transition-all duration-300 text-sm tracking-wide transform active:scale-[0.99]">
+          <button type="submit" class="passage-primary-button btn-shine w-full hover:shadow-xl hover:shadow-emerald-500/20 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-500/10 transition-all duration-300 text-sm tracking-wide transform active:scale-[0.99]">
             Sign In to Passage
           </button>
         </div>

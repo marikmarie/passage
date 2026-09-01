@@ -15,7 +15,7 @@ database/       Canonical PASSAGE MySQL schema
 docs/           API reference, handoff notes, and supplied requirements
 ```
 
-There is no PHP framework, Composer dependency, Node runtime, or build process required to run the application. The active API is served by `public/index.php`; controllers return JSON for API endpoints and render PHP views for web endpoints.
+There is no PHP framework, Composer dependency, Node runtime, or build process required to run the application. The active API is served by `public/index.php`, which boots configuration and error handling from `app/bootstrap.php`; controllers return JSON for API endpoints and render PHP views for web endpoints.
 
 ## Requirements
 
@@ -72,7 +72,7 @@ The watch flow follows the supplied requirements: device bearer tokens, server-c
 
 ## Admin dashboard
 
-The dashboard is composed from small PHP files in `app/Views/admin/components/` and `app/Views/admin/partials/`; its styles, images, and browser behavior are under `public/assets/admin/`. Admin sign-in calls `/api/v1/auth/login`; create an administrator through the API or database with a securely hashed password before using it.
+The dashboard is composed from small PHP files in `app/Views/admin/components/` and `app/Views/admin/partials/`; its styles, images, and browser behavior are under `public/assets/admin/`. `public/assets/css/passage-theme.css` is the single source of PASSAGE colours and semantic status tokens for every rendered view. Admin sign-in calls `/api/v1/auth/login`; create an administrator through the API or database with a securely hashed password before using it.
 
 ## Documentation
 

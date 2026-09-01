@@ -1,28 +1,6 @@
 <style>
   /* ── shared tokens ── */
-  :root {
-    --green-50: #E1F5EE;
-    --green-100: #9FE1CB;
-    --green-200: #5DCAA5;
-    --green-500: #1D9E75;
-    --green-700: #0F6E56;
-    --green-900: #085041;
-    --gray-50: #F7F8F9;
-    --gray-100: #EFF0F2;
-    --gray-200: #E0E2E6;
-    --gray-400: #9EA3AF;
-    --gray-600: #5C6270;
-    --gray-900: #0F1117;
-    --red-50: #FCEBEB;
-    --red-100: #F7C1C1;
-    --red-600: #A32D2D;
-    --amber-50: #FAEEDA;
-    --amber-600: #854F0B;
-    --blue-50: #E6F1FB;
-    --blue-600: #185FA5;
-  }
-
-  /* ── stat cards ── */
+/* ── stat cards ── */
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -31,7 +9,7 @@
   }
 
   .stat-card {
-    background: #fff;
+    background: var(--passage-white);
     border: 1px solid var(--gray-100);
     border-radius: 12px;
     padding: 20px;
@@ -75,7 +53,7 @@
   }
 
   .hero .stat-val {
-    color: #fff;
+    color: var(--passage-white);
   }
 
   .stat-sub {
@@ -108,7 +86,7 @@
 
   /* ── cards ── */
   .card {
-    background: #fff;
+    background: var(--passage-white);
     border: 1px solid var(--gray-100);
     border-radius: 12px;
     overflow: hidden;
@@ -210,15 +188,15 @@
   }
 
   .a-dot.red {
-    background: #E24B4A;
+    background: var(--passage-alert-red);
   }
 
   .a-dot.amber {
-    background: #EF9F27;
+    background: var(--passage-alert-amber);
   }
 
   .a-dot.blue {
-    background: #378ADD;
+    background: var(--passage-alert-blue);
   }
 
   .a-body p:first-child {
@@ -261,7 +239,7 @@
     font-size: 12px;
     font-weight: 500;
     border: 1px solid var(--gray-200);
-    background: #fff;
+    background: var(--passage-white);
     color: var(--gray-600);
     cursor: pointer;
     font-family: inherit;
@@ -275,7 +253,7 @@
   .pill.active {
     background: var(--green-500);
     border-color: var(--green-500);
-    color: #fff;
+    color: var(--passage-white);
   }
 
   /* ── table ── */
@@ -316,11 +294,11 @@
   }
 
   .ride-table tbody tr.row-progress td {
-    background: #FFFBF0;
+    background: var(--passage-warning-surface);
   }
 
   .ride-table tbody tr.row-pending td {
-    background: #FFF8F8;
+    background: var(--passage-danger-surface);
   }
 
   .ride-id {
@@ -443,7 +421,7 @@
     font-size: 12px;
     border: 1px solid var(--gray-200);
     border-radius: 6px;
-    background: #fff;
+    background: var(--passage-white);
     color: var(--gray-600);
     cursor: pointer;
     font-family: inherit;
@@ -457,7 +435,7 @@
   .pag-btn.active {
     background: var(--green-500);
     border-color: var(--green-500);
-    color: #fff;
+    color: var(--passage-white);
     font-weight: 600;
   }
 
@@ -467,7 +445,7 @@
     align-items: center;
     gap: 6px;
     background: var(--green-500);
-    color: #fff;
+    color: var(--passage-white);
     border: none;
     border-radius: 8px;
     padding: 8px 16px;
@@ -486,7 +464,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #fff;
+    background: var(--passage-white);
     color: var(--gray-600);
     border: 1px solid var(--gray-200);
     border-radius: 8px;

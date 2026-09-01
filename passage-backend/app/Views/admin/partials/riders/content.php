@@ -17,7 +17,7 @@
 
   <div class="stats-grid">
     <div class="stat-card hero">
-      <div class="stat-icon" style="background:rgba(255,255,255,.14);color:#fff;">
+      <div class="stat-icon" style="background:rgba(255,255,255,.14);color:var(--passage-white);">
         <i class="ti ti-shield-check"></i>
       </div>
       <div class="stat-label">Parent-led onboarding</div>
